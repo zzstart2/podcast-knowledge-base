@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客解答器 - 有问题，找播客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif; 
+            line-height: 1.6; 
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .title { 
+            font-size: 3rem; 
+            margin-bottom: 15px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .subtitle { 
+            font-size: 1.3rem; 
+            color: #666; 
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        .version { 
+            font-size: 0.9rem; 
+            color: #999; 
+            background: rgba(255,255,255,0.8);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .search-section { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        .search-input { 
+            width: 100%; 
+            padding: 20px; 
+            font-size: 16px; 
+            border: 2px solid #e1e5e9; 
+            border-radius: 12px; 
+            resize: vertical; 
+            min-height: 120px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus { 
+            outline: none; 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        .search-button { 
+            width: 100%; 
+            padding: 18px; 
+            margin-top: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .search-button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .search-button:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+        .popular-questions { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1); 
+            margin-bottom: 40px; 
+        }
+        .popular-title { 
+            text-align: center; 
+            margin-bottom: 25px; 
+            color: #333; 
+            font-size: 1.3rem;
+        }
+        .questions-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
+        .question-tag { 
+            padding: 15px 20px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+            border: 1px solid #e9ecef; 
+            border-radius: 25px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .question-tag:hover { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .results { 
+            display: none; 
+        }
+        .result-card { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 25px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        .result-title { 
+            font-size: 1.3rem; 
+            margin-bottom: 12px; 
+            color: #333; 
+            font-weight: 600;
+        }
+        .result-podcast { 
+            color: #667eea; 
+            font-weight: bold; 
+            font-size: 1.1rem;
+        }
+        .result-summary { 
+            margin: 15px 0; 
+            color: #666; 
+            line-height: 1.7;
+        }
+        .result-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .result-insights { 
+            margin: 20px 0; 
+        }
+        .insight-tag { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+            color: #1976d2; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            font-size: 12px; 
+            margin: 3px; 
+            font-weight: 500;
+        }
+        .result-links { 
+            margin-top: 20px; 
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .platform-link { 
+            display: inline-block; 
+            padding: 10px 18px; 
+            margin: 6px; 
+            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); 
+            color: #333; 
+            text-decoration: none; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .platform-link:hover { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white;
+            transform: translateY(-2px);
+        }
+        .loading { 
+            display: none; 
+            text-align: center; 
+            padding: 60px; 
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .loading-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .footer { 
+            text-align: center; 
+            padding: 40px; 
+            color: #999; 
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+        .match-badge {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; }
+        .badge-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #333; }
+        .badge-3 { background: linear-gradient(135deg, #cd7f32, #ffa500); }
+        
+        @media (max-width: 768px) {
+            .title { font-size: 2.2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .search-section { padding: 25px; }
+            .result-card { padding: 20px; }
+            .questions-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎧 播客解答器</h1>
+            <p class="subtitle">有问题，找播客 - 输入你的困扰，获得最相关的播客推荐</p>
+            <span class="version">v1.0.0 Beta</span>
+        </div>
+
+        <div class="search-section">
+            <textarea 
+                id="questionInput" 
+                class="search-input" 
+                placeholder="输入你遇到的问题或困扰...
+
+例如：
+• 我最近工作压力很大，总是焦虑，怎么办？
+• 如何提高工作效率，避免拖延？
+• 想学理财投资但不知道从哪里开始？"></textarea>
+            <button onclick="searchPodcasts()" class="search-button" id="searchBtn">
+                🔍 寻找相关播客
+            </button>
+        </div>
+
+        <div class="popular-questions">
+            <h3 class="popular-title">🔥 热门问题推荐</h3>
+            <div class="questions-grid">
+                <div class="question-tag" onclick="setQuestion('如何提高工作效率？')">如何提高工作效率？</div>
+                <div class="question-tag" onclick="setQuestion('怎样管理时间？')">怎样管理时间？</div>
+                <div class="question-tag" onclick="setQuestion('如何克服拖延症？')">如何克服拖延症？</div>
+                <div class="question-tag" onclick="setQuestion('怎么缓解工作压力和焦虑？')">怎么缓解工作压力？</div>
+                <div class="question-tag" onclick="setQuestion('如何建立好习惯？')">如何建立好习惯？</div>
+                <div class="question-tag" onclick="setQuestion('如何学会投资理财？')">如何学会投资理财？</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">🔍 正在为你搜索最相关的播客...</div>
+        </div>
+
+        <div id="results" class="results"></div>
+
+        <div class="footer">
+            <p>播客解答器 v1.0.0 | 让知识触手可及 | 基于AI智能推荐</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                <a href="https://github.com/your-username/podcast-qa-system" target="_blank" style="color: #667eea; text-decoration: none;">
+                    📋 GitHub开源项目
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 模拟播客数据
+        const podcastData = [
+            {
+                "id": 1,
+                "title": "高效工作的五个底层逻辑",
+                "podcast_name": "得到头条",
+                "description": "从心理学角度解析工作效率的本质，分享五个提升工作效率的底层思维模式",
+                "content_summary": "本期节目深入探讨了工作效率的心理学基础，提出了五个关键的底层逻辑：专注力管理、优先级排序、能量管理、习惯培养和反馈循环。通过具体案例和实操方法，帮助听众建立高效的工作系统。",
+                "key_insights": ["番茄工作法的科学原理", "优先级矩阵的实际应用", "能量管理比时间管理更重要", "习惯养成的21天理论", "即时反馈提升效率"],
+                "duration_minutes": 42,
+                "publish_date": "2026-03-10",
+                "guests": [{"name": "张三", "title": "时间管理专家", "company": "效率研究院", "role": "嘉宾"}],
+                "links": [
+                    {"platform": "apple_podcasts", "platform_name": "Apple Podcasts", "url": "https://podcasts.apple.com/cn/podcast/episode/1"},
+                    {"platform": "spotify", "platform_name": "Spotify", "url": "https://open.spotify.com/episode/1"},
+                    {"platform": "xiaoyuzhou", "platform_name": "小宇宙", "url": "https://www.xiaoyuzhoufm.com/episode/1"}
+                ],
+                "quality_score": 4.7,
+                "keywords": ["工作效率", "时间管理", "专注力", "习惯", "心理学", "生产力"]
+            },
+            {
+                "id": 2, 
+                "title": "从拖延到高效的心理转变",
+                "podcast_name": "商业就是这样",
+                "description": "深度分析拖延症的心理根源，提供科学有效的解决方案",
+                "content_summary": "本期节目从心理学角度剖析拖延行为的根本原因，包括完美主义、恐惧失败、缺乏动机等。通过认知行为疗法的方法，提供了系统性的拖延症治疗方案。",
+                "key_insights": ["拖延的心理机制分析", "完美主义陷阱", "恐惧心理的应对", "行动导向的思维模式", "小步快跑策略"],
+                "duration_minutes": 38,
+                "publish_date": "2026-02-28",
+                "guests": [{"name": "李四", "title": "心理学博士", "company": "心理健康研究所", "role": "嘉宾"}],
+                "links": [
+                    {"platform": "apple_podcasts", "platform_name": "Apple Podcasts", "url": "https://podcasts.apple.com/cn/podcast/episode/2"},
+                    {"platform": "xiaoyuzhou", "platform_name": "小宇宙", "url": "https://www.xiaoyuzhoufm.com/episode/2"}
+                ],
+                "quality_score": 4.5,
+                "keywords": ["拖延症", "心理健康", "完美主义", "恐惧", "行动力", "认知疗法"]
+            },
+            {
+                "id": 3,
+                "title": "情绪管理：从焦虑到平静的内心修炼",
+                "podcast_name": "心理FM",
+                "description": "学会管理情绪，找到内心的平静与力量",
+                "content_summary": "本期分享情绪管理的核心技巧，包括情绪识别、接纳、转化的全过程。通过冥想、呼吸法等实操方法，帮助听众建立情绪稳定性。",
+                "key_insights": ["情绪的生理机制", "正念冥想技巧", "呼吸调节方法", "认知重构技术", "情绪日记的作用"],
+                "duration_minutes": 35,
+                "publish_date": "2026-03-05",
+                "guests": [{"name": "简里里", "title": "心理咨询师", "company": "心理工作室", "role": "主播"}],
+                "links": [
+                    {"platform": "spotify", "platform_name": "Spotify", "url": "https://open.spotify.com/episode/3"},
+                    {"platform": "xiaoyuzhou", "platform_name": "小宇宙", "url": "https://www.xiaoyuzhoufm.com/episode/3"}
+                ],
+                "quality_score": 4.6,
+                "keywords": ["情绪管理", "焦虑", "压力", "冥想", "心理健康", "正念"]
+            },
+            {
+                "id": 4,
+                "title": "创业思维：从0到1的突破",
+                "podcast_name": "创业内参",
+                "description": "分析成功创业者的思维模式和决策逻辑",
+                "content_summary": "深入分析创业思维的核心要素，包括机会识别、资源整合、风险管理、团队建设等关键能力。通过真实案例分享创业成功的关键要素。",
+                "key_insights": ["市场机会识别", "MVP验证方法", "资源杠杆思维", "失败快速迭代", "团队搭建原则"],
+                "duration_minutes": 52,
+                "publish_date": "2026-02-20",
+                "guests": [{"name": "王五", "title": "创业导师", "company": "创新工场", "role": "嘉宾"}],
+                "links": [
+                    {"platform": "apple_podcasts", "platform_name": "Apple Podcasts", "url": "https://podcasts.apple.com/cn/podcast/episode/4"}
+                ],
+                "quality_score": 4.4,
+                "keywords": ["创业", "商业模式", "团队管理", "机会识别", "风险管理", "MVP"]
+            },
+            {
+                "id": 5,
+                "title": "理财入门：普通人的财富增长之路",
+                "podcast_name": "得到头条",
+                "description": "适合普通人的理财方法和投资策略",
+                "content_summary": "从理财基础知识开始，逐步介绍适合普通人的投资方法。涵盖基金定投、保险配置、风险管理等实用内容。",
+                "key_insights": ["理财规划的重要性", "基金定投策略", "保险的正确配置", "风险与收益平衡", "复利的威力"],
+                "duration_minutes": 40,
+                "publish_date": "2026-03-12",
+                "guests": [{"name": "赵六", "title": "理财规划师", "company": "财富管理公司", "role": "嘉宾"}],
+                "links": [
+                    {"platform": "spotify", "platform_name": "Spotify", "url": "https://open.spotify.com/episode/5"},
+                    {"platform": "xiaoyuzhou", "platform_name": "小宇宙", "url": "https://www.xiaoyuzhoufm.com/episode/5"}
+                ],
+                "quality_score": 4.3,
+                "keywords": ["理财", "投资", "基金定投", "保险", "财务规划", "复利"]
+            }
+        ];
+
+        function setQuestion(question) {
+            document.getElementById('questionInput').value = question;
+        }
+
+        function extractKeywords(question) {
+            const keywordMap = {
+                "效率": ["工作效率", "效率", "生产力"],
+                "时间": ["时间管理", "时间"],
+                "拖延": ["拖延症", "拖延"],
+                "焦虑": ["焦虑", "压力", "紧张"],
+                "情绪": ["情绪管理", "情绪", "心理"],
+                "创业": ["创业", "商业", "startup"],
+                "理财": ["理财", "投资", "财务", "金融"],
+                "管理": ["管理", "领导", "团队"],
+                "学习": ["学习", "知识", "技能"],
+                "沟通": ["沟通", "交流", "人际关系"]
+            };
+            
+            let keywords = [];
+            const questionLower = question.toLowerCase();
+            
+            for (const [category, words] of Object.entries(keywordMap)) {
+                for (const word of words) {
+                    if (questionLower.includes(word)) {
+                        keywords.push(...words.slice(0, 2));
+                        break;
+                    }
+                }
+            }
+            
+            if (keywords.length === 0) {
+                const chineseWords = question.match(/[\u4e00-\u9fff]+/g) || [];
+                keywords = chineseWords.filter(word => word.length >= 2).slice(0, 5);
+            }
+            
+            return [...new Set(keywords)];
+        }
+
+        function searchEpisodes(keywords) {
+            const results = [];
+            
+            for (const episode of podcastData) {
+                let score = 0;
+                for (const keyword of keywords) {
+                    const keywordLower = keyword.toLowerCase();
+                    if (episode.title.toLowerCase().includes(keywordLower)) {
+                        score += 3;
+                    }
+                    if (episode.description.toLowerCase().includes(keywordLower)) {
+                        score += 2;
+                    }
+                    if (episode.keywords.some(k => k.toLowerCase().includes(keywordLower))) {
+                        score += 4;
+                    }
+                }
+                
+                if (score > 0) {
+                    results.push({ ...episode, relevance_score: score });
+                }
+            }
+            
+            return results.sort((a, b) => b.relevance_score - a.relevance_score).slice(0, 3);
+        }
+
+        async function searchPodcasts() {
+            const question = document.getElementById('questionInput').value.trim();
+            if (!question) {
+                alert('请输入你的问题');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const searchBtn = document.getElementById('searchBtn');
+            
+            // 显示加载状态
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            searchBtn.disabled = true;
+            searchBtn.textContent = '🔍 搜索中...';
+
+            // 模拟搜索延迟
+            setTimeout(() => {
+                try {
+                    const keywords = extractKeywords(question);
+                    const episodes = searchEpisodes(keywords);
+                    
+                    loading.style.display = 'none';
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = '🔍 寻找相关播客';
+                    
+                    if (episodes.length > 0) {
+                        displayResults(question, episodes, keywords);
+                    } else {
+                        results.innerHTML = '<div class="result-card">没有找到相关播客，试试换个问法吧 😊</div>';
+                        results.style.display = 'block';
+                    }
+                } catch (error) {
+                    loading.style.display = 'none';
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = '🔍 寻找相关播客';
+                    results.innerHTML = '<div class="result-card">搜索失败，请稍后再试</div>';
+                    results.style.display = 'block';
+                    console.error('搜索错误:', error);
+                }
+            }, 1500);
+        }
+
+        function displayResults(question, recommendations, keywords) {
+            const results = document.getElementById('results');
+            let html = `<h3 style="text-align: center; margin-bottom: 30px; font-size: 1.5rem; color: #333;">🎯 针对问题："${question}"，为你推荐 ${recommendations.length} 期播客：</h3>`;
+            
+            recommendations.forEach((rec, index) => {
+                const badges = ['🏆 最匹配', '💡 实用性强', '🔥 用户好评'];
+                const badge = badges[index] || `第 ${index + 1} 推荐`;
+                const badgeClass = `badge-${index + 1}`;
+                
+                html += `
+                    <div class="result-card">
+                        <div class="match-badge ${badgeClass}">
+                            ${badge}
+                        </div>
+                        <div class="result-title">《${rec.podcast_name}》第${rec.id}期</div>
+                        <div style="font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #333;">💬 ${rec.title}</div>
+                        
+                        ${rec.guests && rec.guests.length > 0 ? `
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 15px; border-radius: 12px; margin: 15px 0;">
+                                👤 <strong>嘉宾：</strong>${rec.guests.map(g => `${g.name}${g.title ? `（${g.title}）` : ''}`).join('、')}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="result-meta">
+                            ${rec.duration_minutes ? `⏱️ ${rec.duration_minutes}分钟` : ''} 
+                            ${rec.publish_date ? `📅 ${rec.publish_date}` : ''}
+                            ${rec.quality_score ? `⭐ ${rec.quality_score.toFixed(1)}分` : ''}
+                        </div>
+                        
+                        ${rec.content_summary ? `
+                            <div class="result-summary">
+                                <strong>📝 内容摘要：</strong><br>${rec.content_summary}
+                            </div>
+                        ` : ''}
+                        
+                        ${rec.key_insights && rec.key_insights.length > 0 ? `
+                            <div class="result-insights">
+                                <strong>💡 核心要点：</strong><br>
+                                ${rec.key_insights.slice(0, 5).map(insight => 
+                                    `<span class="insight-tag">${insight}</span>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="result-links">
+                            <strong>🔗 收听链接：</strong><br>
+                            ${rec.links && rec.links.length > 0 ? 
+                                rec.links.map(link => 
+                                    `<a href="${link.url}" target="_blank" class="platform-link">${link.platform_name}</a>`
+                                ).join('') 
+                                : '<span style="color: #999;">暂无播放链接</span>'
+                            }
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f0f0; font-size: 12px; color: #999;">
+                            匹配关键词: ${keywords.slice(0, 3).join('、')} | 相关度: ${rec.relevance_score}分
+                        </div>
+                    </div>
+                `;
+            });
+            
+            results.innerHTML = html;
+            results.style.display = 'block';
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 支持回车键搜索
+        document.getElementById('questionInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                searchPodcasts();
+            }
+        });
+    </script>
+</body>
+</html>
