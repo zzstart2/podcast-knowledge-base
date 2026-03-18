@@ -3,12 +3,18 @@
 
 import json
 import os
+import re
 import sqlite3
 import struct
+import subprocess
 import sys
+import threading
+import time
+import uuid
 import urllib.parse
 import urllib.request
 import urllib.error
+from collections import deque
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
@@ -198,15 +204,188 @@ def _person(p):
             "affiliations": p.affiliations, "tags": p.tags}
 
 
+# ── Admin: job queue + rate limiter ──────────────────────────────────────────
+
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
+
+# In-memory job store: {job_id: {status, log, done, error}}
+_jobs: dict = {}
+_jobs_lock = threading.Lock()
+
+# Rate limit: max 5 add-podcast calls per hour per token
+_rate_window: deque = deque()  # timestamps of recent calls
+_RATE_LIMIT = 5
+_RATE_WINDOW_SECS = 3600
+
+# Only 1 job running at a time
+_running_job: list = [None]  # [job_id | None]
+
+
+def _check_rate_limit() -> bool:
+    """Return True if allowed, False if rate limit exceeded."""
+    now = time.time()
+    with _jobs_lock:
+        # Evict old entries
+        while _rate_window and now - _rate_window[0] > _RATE_WINDOW_SECS:
+            _rate_window.popleft()
+        if len(_rate_window) >= _RATE_LIMIT:
+            return False
+        _rate_window.append(now)
+        return True
+
+
+def _podcast_exists(name: str):
+    """Return existing podcast title if already in DB (fuzzy match), else None."""
+    if not DB_PATH.exists():
+        return None
+    conn = sqlite3.connect(DB_PATH)
+    rows = conn.execute("SELECT title, slug FROM podcasts").fetchall()
+    conn.close()
+    name_clean = re.sub(r"[\s\-·・•]", "", name).lower()
+    for title, slug in rows:
+        t_clean = re.sub(r"[\s\-·・•]", "", title).lower()
+        if name_clean == t_clean or name_clean in t_clean or t_clean in name_clean:
+            return title
+    return None
+
+
+def _run_add_podcast(job_id: str, name: str):
+    """Run add_podcast.py in background thread, stream output to job log."""
+    cmd = [sys.executable, str(ROOT / "tools" / "add_podcast.py"),
+           name, "--confirm"]
+    log_lines = []
+
+    def append(line: str):
+        log_lines.append(line)
+        with _jobs_lock:
+            _jobs[job_id]["log"] = "\n".join(log_lines)
+
+    try:
+        proc = subprocess.Popen(
+            cmd, cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1,
+        )
+        for line in proc.stdout:
+            append(line.rstrip())
+        proc.wait()
+        success = proc.returncode == 0
+    except Exception as e:
+        success = False
+        append(f"[错误] {e}")
+
+    with _jobs_lock:
+        _jobs[job_id]["done"] = True
+        _jobs[job_id]["status"] = "done" if success else "error"
+        _running_job[0] = None
+
+
+def _start_job(name: str) -> str:
+    job_id = str(uuid.uuid4())[:8]
+    with _jobs_lock:
+        _jobs[job_id] = {"status": "running", "log": "启动中…", "done": False}
+        _running_job[0] = job_id
+    t = threading.Thread(target=_run_add_podcast, args=(job_id, name), daemon=True)
+    t.start()
+    return job_id
+
+
+# ── Handler ───────────────────────────────────────────────────────────────────
+
 class Handler(BaseHTTPRequestHandler):
     # Load data once at class level
     _loader = DataLoader(ROOT)
     _podcasts, _people, _episodes = _loader.load_all()
     _engine = QueryEngine(_podcasts, _people, _episodes)
 
+    def _check_admin(self) -> bool:
+        """Validate X-Admin-Token header. Send 401 and return False if invalid."""
+        token = self.headers.get("X-Admin-Token", "")
+        if not ADMIN_TOKEN or token != ADMIN_TOKEN:
+            self._err(401, "Unauthorized")
+            return False
+        return True
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Token")
+        self.end_headers()
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+
+        if path == "/api/admin/add-podcast":
+            if not self._check_admin():
+                return
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length) or b"{}")
+            name = (body.get("name") or "").strip()
+
+            # Input validation
+            if not name or len(name) > 60:
+                self._err(400, "播客名称不能为空或超过60字")
+                return
+            if re.search(r'[;&|`$<>]', name):
+                self._err(400, "播客名称含非法字符")
+                return
+
+            # Deduplication
+            existing = _podcast_exists(name)
+            if existing:
+                self._err(409, f"播客《{existing}》已存在，无需重复添加")
+                return
+
+            # Rate limit
+            if not _check_rate_limit():
+                self._err(429, f"操作过于频繁，每小时最多添加 {_RATE_LIMIT} 个播客")
+                return
+
+            # Concurrency: only 1 job at a time
+            with _jobs_lock:
+                if _running_job[0]:
+                    self._err(409, f"当前已有任务在运行（job_id: {_running_job[0]}），请等待完成")
+                    return
+
+            job_id = _start_job(name)
+            self._json({"job_id": job_id, "message": f"开始添加《{name}》"})
+        else:
+            self.send_error(404)
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path, qs = parsed.path, urllib.parse.parse_qs(parsed.query)
+
+        # ── Admin routes ─────────────────────────────────────────────────────
+        if path.startswith("/api/admin/"):
+            if not self._check_admin():
+                return
+            if path == "/api/admin/podcasts":
+                # List existing podcasts (for dedup preview)
+                if DB_PATH.exists():
+                    conn = sqlite3.connect(DB_PATH)
+                    rows = conn.execute(
+                        "SELECT p.title, p.slug, COUNT(e.id) as ep_count "
+                        "FROM podcasts p LEFT JOIN episodes e ON e.podcast_id=p.id "
+                        "GROUP BY p.id ORDER BY p.title"
+                    ).fetchall()
+                    conn.close()
+                    self._json([{"title": r[0], "slug": r[1], "episode_count": r[2]} for r in rows])
+                else:
+                    self._json([])
+            elif path.startswith("/api/admin/job/"):
+                job_id = path.split("/")[-1]
+                with _jobs_lock:
+                    job = _jobs.get(job_id)
+                if not job:
+                    self._err(404, "Job not found")
+                else:
+                    self._json(job)
+            else:
+                self.send_error(404)
+            return
 
         if path in ("/", "/index.html"):
             self._serve_file(UI_DIR / "answer-book.html", "text/html; charset=utf-8")
@@ -284,6 +463,15 @@ class Handler(BaseHTTPRequestHandler):
     def _json(self, data):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Token")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _err(self, code: int, msg: str):
+        body = json.dumps({"error": msg}, ensure_ascii=False).encode("utf-8")
+        self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
