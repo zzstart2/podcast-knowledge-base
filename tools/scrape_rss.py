@@ -130,7 +130,8 @@ def parse_feed(raw: bytes) -> tuple[dict, list[dict]]:
         # Audio enclosure
         enc = item.find("enclosure")
         audio_url = enc.attrib.get("url", "") if enc is not None else ""
-        audio_size = int(enc.attrib.get("length", 0)) if enc is not None else 0
+        _len_str = (enc.attrib.get("length") or "0") if enc is not None else "0"
+        audio_size = int(_len_str) if _len_str.strip().isdigit() else 0
 
         # Duration
         dur_raw = _text(item, "duration", "itunes") or ""
