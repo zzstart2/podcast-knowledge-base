@@ -24,6 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 DB_PATH = ROOT / "data" / "podcast.db"
 
+EMBEDDING_MODEL = "embo-01"
+
 
 # ── .env loader ───────────────────────────────────────────────────────────────
 
@@ -47,6 +49,27 @@ def ensure_schema(conn: sqlite3.Connection):
         conn.execute("ALTER TABLE episodes ADD COLUMN embedding BLOB")
         conn.commit()
         print("Added 'embedding' column to episodes table", file=sys.stderr)
+    # Metadata table: tracks which model + dimension was used for stored embeddings
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS embedding_meta (
+            key   TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+
+
+def get_stored_model(conn: sqlite3.Connection):
+    row = conn.execute(
+        "SELECT value FROM embedding_meta WHERE key='model'"
+    ).fetchone()
+    return row[0] if row else None
+
+
+def set_embedding_meta(conn: sqlite3.Connection, model: str, dim: int):
+    conn.execute("INSERT OR REPLACE INTO embedding_meta VALUES ('model', ?)", (model,))
+    conn.execute("INSERT OR REPLACE INTO embedding_meta VALUES ('dim', ?)", (str(dim),))
+    conn.commit()
 
 
 # ── Embedding helpers ─────────────────────────────────────────────────────────
@@ -115,6 +138,26 @@ def main():
     conn.row_factory = sqlite3.Row
     ensure_schema(conn)
 
+    # Check embedding model consistency
+    stored_model = get_stored_model(conn)
+    if stored_model and stored_model != EMBEDDING_MODEL:
+        if args.force:
+            print(
+                f"[warn] Stored model ({stored_model!r}) differs from current model "
+                f"({EMBEDDING_MODEL!r}). --force specified: all embeddings will be "
+                f"re-generated with the new model.",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                f"ERROR: Stored embeddings were generated with model {stored_model!r}, "
+                f"but current model is {EMBEDDING_MODEL!r}.\n"
+                f"Re-run with --force to discard old embeddings and re-generate everything.",
+                file=sys.stderr,
+            )
+            conn.close()
+            sys.exit(1)
+
     # Fetch episodes to embed
     if args.force:
         rows = conn.execute("SELECT * FROM episodes WHERE enriched=1").fetchall()
@@ -160,6 +203,11 @@ def main():
                 (blob, ep_row["guid"]),
             )
         conn.commit()
+
+        # Record model + dim after first successful batch
+        if done == 0 and vectors:
+            set_embedding_meta(conn, EMBEDDING_MODEL, len(vectors[0]))
+
         done += len(batch)
         print(f"[{done}/{total}] embedded", file=sys.stderr)
         time.sleep(0.3)

@@ -1,0 +1,27 @@
+你是一个播客内容分析助手。我会给你一期播客的标题和文字说明，请你完成以下任务：
+
+1. **summary**（中文，2-3句话）：用简洁的语言描述这集播客的核心内容，重点是它能带给听众什么。
+
+2. **question_matches**（中文，8-10条）：列举出"用户会带着什么样的问题或困惑来听这集播客"。
+   - 用第一人称或疑问句，贴近真实用户的语言
+   - 涵盖不同角度：情绪困扰、认知疑问、实操需求、人生阶段等
+   - 例：["我感觉工作越来越没意义，怎么办？", "如何在AI时代保持自己的竞争力？"]
+
+3. **tags**（从下面的标签表中选取，3-6个）：
+   topic标签可选：investment, investment-edu, cognition, knowledge-system, philosophy, life-attitude, mental-health, self-awareness, long-termism, entrepreneurship, ai, human-machine, time-management, adaptation, expression
+   format标签可选：interview, solo, panel, minisode
+   mood标签可选：inspirational, reflective, practical, comforting
+
+---
+播客标题：{title}
+
+播客说明：
+{description}
+---
+
+请严格按照以下JSON格式输出，不要有任何其他文字：
+{
+  "summary": "...",
+  "question_matches": ["...", "...", "..."],
+  "tags": ["topic:xxx", "format:xxx", "mood:xxx"]
+}

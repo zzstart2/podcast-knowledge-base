@@ -119,50 +119,63 @@ def parse_feed(raw: bytes) -> tuple[dict, list[dict]]:
     }
 
     episodes = []
+    skipped = 0
     for item in channel.findall("item"):
-        guid = _text(item, "guid") or ""
+        try:
+            guid = _text(item, "guid") or ""
 
-        # Episode URL (link tag)
-        link = _text(item, "link") or ""
-        # Clean utm params
-        link = re.sub(r"\?utm_source=.*$", "", link)
+            # Episode URL (link tag)
+            link = _text(item, "link") or ""
+            # Clean utm params
+            link = re.sub(r"\?utm_source=.*$", "", link)
 
-        # Audio enclosure
-        enc = item.find("enclosure")
-        audio_url = enc.attrib.get("url", "") if enc is not None else ""
-        _len_str = (enc.attrib.get("length") or "0") if enc is not None else "0"
-        audio_size = int(_len_str) if _len_str.strip().isdigit() else 0
+            # Audio enclosure
+            enc = item.find("enclosure")
+            audio_url = enc.attrib.get("url", "") if enc is not None else ""
+            _len_str = (enc.attrib.get("length") or "0") if enc is not None else "0"
+            audio_size = int(_len_str) if _len_str.strip().isdigit() else 0
 
-        # Duration
-        dur_raw = _text(item, "duration", "itunes") or ""
-        duration_min = duration_to_minutes(dur_raw)
+            # Duration
+            dur_raw = _text(item, "duration", "itunes") or ""
+            duration_min = duration_to_minutes(dur_raw)
 
-        # Description: prefer content:encoded, fall back to description
-        desc_html = _text(item, "encoded", "content") or _text(item, "description") or ""
-        description = strip_html(desc_html)
+            # Description: prefer content:encoded, fall back to description
+            desc_html = _text(item, "encoded", "content") or _text(item, "description") or ""
+            description = strip_html(desc_html)
 
-        # Episode number from title (e.g. "E227 …" → 227)
-        title = _text(item, "title") or ""
-        ep_num = None
-        m = re.match(r"E(\d+)", title)
-        if m:
-            ep_num = int(m.group(1))
+            # Episode number from title (e.g. "E227 …" → 227)
+            title = _text(item, "title") or ""
+            ep_num = None
+            m = re.match(r"E(\d+)", title)
+            if m:
+                ep_num = int(m.group(1))
 
-        episodes.append({
-            "guid": guid,
-            "episode_number": ep_num,
-            "title": title,
-            "publish_date": parse_date(_text(item, "pubDate") or ""),
-            "duration_minutes": duration_min,
-            "duration_raw": dur_raw,
-            "description": description,
-            "episode_url": link,
-            "audio_url": audio_url,
-            "audio_size_bytes": audio_size,
-        })
+            episodes.append({
+                "guid": guid,
+                "episode_number": ep_num,
+                "title": title,
+                "publish_date": parse_date(_text(item, "pubDate") or ""),
+                "duration_minutes": duration_min,
+                "duration_raw": dur_raw,
+                "description": description,
+                "episode_url": link,
+                "audio_url": audio_url,
+                "audio_size_bytes": audio_size,
+            })
+        except Exception as exc:
+            title_hint = ""
+            try:
+                title_hint = _text(item, "title") or "(no title)"
+            except Exception:
+                pass
+            print(f"  [warn] skipped malformed item {title_hint!r}: {exc}", file=sys.stderr)
+            skipped += 1
 
     # Sort oldest → newest
     episodes.sort(key=lambda e: (e["publish_date"] or ""))
+
+    if skipped:
+        print(f"  [warn] {skipped} malformed item(s) were skipped", file=sys.stderr)
 
     return podcast_meta, episodes
 

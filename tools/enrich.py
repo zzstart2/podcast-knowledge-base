@@ -33,6 +33,8 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
+PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
+
 
 # ── .env loader (no python-dotenv needed) ─────────────────────────────────────
 
@@ -111,33 +113,19 @@ def call_llm(prompt: str) -> str:
 
 # ── Enrichment prompt ──────────────────────────────────────────────────────────
 
-PROMPT_TEMPLATE = """你是一个播客内容分析助手。我会给你一期播客的标题和文字说明，请你完成以下任务：
+def _load_prompt_template() -> str:
+    """Load prompt template from prompts/enrich.md (falls back to built-in if missing)."""
+    path = PROMPTS_DIR / "enrich.md"
+    try:
+        return path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise RuntimeError(
+            f"Prompt file not found: {path}\n"
+            "Expected: prompts/enrich.md in the project root."
+        )
 
-1. **summary**（中文，2-3句话）：用简洁的语言描述这集播客的核心内容，重点是它能带给听众什么。
-
-2. **question_matches**（中文，8-10条）：列举出"用户会带着什么样的问题或困惑来听这集播客"。
-   - 用第一人称或疑问句，贴近真实用户的语言
-   - 涵盖不同角度：情绪困扰、认知疑问、实操需求、人生阶段等
-   - 例：["我感觉工作越来越没意义，怎么办？", "如何在AI时代保持自己的竞争力？"]
-
-3. **tags**（从下面的标签表中选取，3-6个）：
-   topic标签可选：investment, investment-edu, cognition, knowledge-system, philosophy, life-attitude, mental-health, self-awareness, long-termism, entrepreneurship, ai, human-machine, time-management, adaptation, expression
-   format标签可选：interview, solo, panel, minisode
-   mood标签可选：inspirational, reflective, practical, comforting
-
----
-播客标题：{title}
-
-播客说明：
-{description}
----
-
-请严格按照以下JSON格式输出，不要有任何其他文字：
-{{
-  "summary": "...",
-  "question_matches": ["...", "...", "..."],
-  "tags": ["topic:xxx", "format:xxx", "mood:xxx"]
-}}"""
+# Loaded once at import time
+PROMPT_TEMPLATE = _load_prompt_template()
 
 
 def build_prompt(episode: dict) -> str:
@@ -145,9 +133,11 @@ def build_prompt(episode: dict) -> str:
     desc = episode.get("description", "")
     if len(desc) > 1500:
         desc = desc[:1500] + "…"
-    return PROMPT_TEMPLATE.format(
-        title=episode.get("title", ""),
-        description=desc,
+    # Simple replacement (avoids escaping issues with JSON braces in the template)
+    return (
+        PROMPT_TEMPLATE
+        .replace("{title}", episode.get("title", ""))
+        .replace("{description}", desc)
     )
 
 
