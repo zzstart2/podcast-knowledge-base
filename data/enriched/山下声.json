@@ -35,11 +35,11 @@
         "在回顾过去时，如何做到既坦诚又不过度苛责自己？"
       ],
       "tags": [
-        "topic:self-awareness",
-        "topic:mental-health",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:自我认知",
+        "topic:心理健康",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -66,11 +66,11 @@
         "如何像李娜一样，在不同人生阶段保持对生活的热情？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:inspirational",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:激励",
+        "mood:深思"
       ]
     },
     {
@@ -98,12 +98,12 @@
         "如何建立一个彼此支持、充满温度的社群关系？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:adaptation",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -130,11 +130,11 @@
         "如何理解‘爱上这个世界，才能爱自己’这句话？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -161,12 +161,12 @@
         "如何在多元文化中找到自我认同？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:adaptation",
-        "format:interview",
-        "mood:inspirational",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:激励",
+        "mood:深思"
       ]
     },
     {
@@ -193,12 +193,12 @@
         "当代艺术如何应对短视频等新媒介的挑战？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:adaptation",
-        "topic:expression",
-        "format:solo",
-        "mood:reflective",
-        "mood:practical"
+        "topic:哲学",
+        "topic:适应与改变",
+        "topic:表达",
+        "format:独白",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -225,11 +225,11 @@
         "为什么说迷茫和痛苦也是一种人生财富？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -257,12 +257,12 @@
         "面对快速变化的世界，我该如何自处并找到内心的平静？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:self-awareness",
-        "topic:adaptation",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:哲学",
+        "topic:自我认知",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -290,12 +290,12 @@
         "在创作过程中，如何平衡理性与感性，找到自己的独特风格？"
       ],
       "tags": [
-        "topic:self-awareness",
-        "topic:life-attitude",
-        "topic:expression",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:自我认知",
+        "topic:生活态度",
+        "topic:表达",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -322,12 +322,12 @@
         "在选择职业方向时，如何像于佩尔一样追随内心？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -353,12 +353,12 @@
         "在人生低谷期，如何重新找到生活的意义与方向？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -386,12 +386,12 @@
         "故乡对一个人的成长和创作有何深远影响？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:adaptation",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -419,11 +419,11 @@
         "年轻人如何找到属于自己的艺术表达方式？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:expression",
-        "topic:cognition",
-        "format:interview",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:表达",
+        "topic:认知",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -450,12 +450,12 @@
         "在快速变化的时代，如何保持自我成长而不被时代淘汰？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:interview",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:对谈",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -482,11 +482,11 @@
         "南北方文化差异对个人成长有哪些影响？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -514,12 +514,12 @@
         "女性如何通过共情能力展现真正的力量，而非软弱？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     }
   ]

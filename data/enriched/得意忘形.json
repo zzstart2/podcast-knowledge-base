@@ -36,11 +36,11 @@
         "科学与哲学如何共同解答人生的意义？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:cognition",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:认知",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -66,11 +66,11 @@
         "播客想传达的核心理念是什么，它如何影响我的生活？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:mental-health",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:心理健康",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -97,11 +97,11 @@
         "有哪些心理学原理可以帮助我更好地完成目标？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:cognition",
-        "format:panel",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:认知",
+        "format:圆桌",
+        "mood:深思"
       ]
     },
     {
@@ -127,11 +127,11 @@
         "如何摆脱传统思维方式的局限，拥抱更开放的世界观？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:cognition",
-        "topic:time-management",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:认知",
+        "topic:时间管理",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -158,11 +158,11 @@
         "在消费主义盛行的时代，我们如何保持理性消费？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -190,11 +190,11 @@
         "如何理解消费主义与个人幸福感之间的关系？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -220,11 +220,11 @@
         "我该如何提升自己的认知能力，更全面地理解世界？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:practical",
-        "mood:reflective"
+        "topic:认知",
+        "topic:生活态度",
+        "format:独白",
+        "mood:实用",
+        "mood:深思"
       ]
     },
     {
@@ -251,11 +251,11 @@
         "人类的存在有目的吗？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:philosophy",
-        "topic:knowledge-system",
-        "format:solo",
-        "mood:reflective"
+        "topic:认知",
+        "topic:哲学",
+        "topic:知识体系",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -282,11 +282,11 @@
         "如何结束一段心理咨询关系？分离过程会对我有怎样的影响？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:心理健康",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -312,11 +312,11 @@
         "如何将网球中的思维方式应用到生活和工作中？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "format:solo",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:心理健康",
+        "format:独白",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -342,11 +342,11 @@
         "情绪在人生中扮演什么角色？人类是否应该追求消灭情绪？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:mental-health",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:心理健康",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -372,11 +372,11 @@
         "如何在快节奏的生活中找到内心的平静？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:心理健康",
+        "topic:自我认知",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -402,11 +402,11 @@
         "如何平衡个人价值与商业成功之间的关系？"
       ],
       "tags": [
-        "topic:investment",
-        "topic:cognition",
-        "topic:philosophy",
-        "format:interview",
-        "mood:reflective"
+        "topic:投资",
+        "topic:认知",
+        "topic:哲学",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -432,10 +432,10 @@
         "作为普通消费者，我该如何理性地面对消费主义？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:认知",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -461,11 +461,11 @@
         "主播推荐的心理治疗相关资源对我有什么帮助？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:practical"
+        "topic:心理健康",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -491,11 +491,11 @@
         "如何更好地理解自我并认知世界？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -522,11 +522,11 @@
         "我们如何利用社会学知识来改善人际关系？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:philosophy",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:认知",
+        "topic:哲学",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -552,11 +552,11 @@
         "普通人如何开始创作并找到自己的方向？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:expression",
-        "format:solo",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:表达",
+        "format:独白",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -583,11 +583,11 @@
         "如何在快节奏的生活中找到与宇宙的连接感？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -614,11 +614,11 @@
         "为什么我会对人工智能感到恐惧或不安？"
       ],
       "tags": [
-        "topic:ai",
-        "topic:human-machine",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:人工智能",
+        "topic:人机关系",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -645,10 +645,10 @@
         "有哪些实用的思维工具可以帮助我更好地理解生活？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -674,11 +674,11 @@
         "如何通过艺术家的视角重新审视我的工作和生活？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:inspirational",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:激励",
+        "mood:深思"
       ]
     },
     {
@@ -704,11 +704,11 @@
         "如何才能在现代社会的压力下保持自我觉察？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -734,11 +734,11 @@
         "真诚和自我觉察如何帮助我穿越时间，找到生活的本质？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -764,11 +764,11 @@
         "在现代社会中，如何保持自我价值感？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:life-attitude",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:心理健康",
+        "topic:生活态度",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -794,11 +794,11 @@
         "在沟通中，如何识别和应对隐藏的情感需求？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "topic:expression",
-        "format:solo",
-        "mood:reflective"
+        "topic:心理健康",
+        "topic:自我认知",
+        "topic:表达",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -824,10 +824,10 @@
         "在人际关系中，如何更好地为自己负责？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -853,11 +853,11 @@
         "有哪些书籍可以帮助我更好地理解自我和世界？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:mental-health",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:心理健康",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -884,11 +884,11 @@
         "一档受欢迎的美食节目背后有哪些细节和心思？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:entrepreneurship",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:创业",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -914,11 +914,11 @@
         "有哪些方法可以帮助我更好地理解自己和世界？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:knowledge-system",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:认知",
+        "topic:知识体系",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -944,11 +944,11 @@
         "面对生活中的分离和变化，该如何调整心态？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:interview",
-        "mood:reflective"
+        "topic:心理健康",
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -974,11 +974,11 @@
         "不同人生阶段，我该如何更好地认识与接纳自己？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -1004,11 +1004,11 @@
         "看球赛时有哪些有趣的故事或体验可以分享？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:expression",
-        "format:interview",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:表达",
+        "format:对谈",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -1034,11 +1034,11 @@
         "在追求个体自由的过程中，幽默能起到什么作用？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:expression",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:表达",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -1065,10 +1065,10 @@
         "个体自由与真理探寻之间存在怎样的关系？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1094,10 +1094,10 @@
         "如何在繁忙的生活中找到时间去探索自己的兴趣？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1124,10 +1124,10 @@
       ],
       "tags": [
         "topic:education",
-        "topic:philosophy",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1153,11 +1153,11 @@
         "为什么音乐和建筑之间会有共通之处？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:life-attitude",
-        "topic:adaptation",
-        "format:interview",
-        "mood:reflective"
+        "topic:认知",
+        "topic:生活态度",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -1184,10 +1184,10 @@
         "如何平衡对自由的追求与现实生活的责任？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1213,11 +1213,11 @@
         "怎样才能做到对自我‘不惑’，活得更明白？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1243,11 +1243,11 @@
         "如何从日常工作中找到更深层次的意义？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:entrepreneurship",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:创业",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -1273,11 +1273,11 @@
         "如何用幽默的方式谈论和面对死亡？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:哲学",
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -1304,11 +1304,11 @@
         "在信息爆炸的时代，我们如何分辨哪些故事是值得倾听的？"
       ],
       "tags": [
-        "topic:cognition",
-        "topic:philosophy",
-        "topic:expression",
-        "format:solo",
-        "mood:reflective"
+        "topic:认知",
+        "topic:哲学",
+        "topic:表达",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1334,10 +1334,10 @@
         "如何通过分析自己的行为来更好地理解世界？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1363,11 +1363,11 @@
         "个体如何在现代社会中找到自己的位置？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1393,11 +1393,11 @@
         "怎样才能不被金钱所控制，活出真正的自我？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1423,11 +1423,11 @@
         "在面对冲突时，怎样才能做出更理智的选择？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:practical"
+        "topic:心理健康",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -1453,11 +1453,11 @@
         "我感到迷茫和焦虑，如何找到内心的平静与方向？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1483,11 +1483,11 @@
         "面对时间被窃取的困境，我该怎么做？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:mental-health",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:心理健康",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1513,11 +1513,11 @@
         "怎样在日常生活中实践对个体自由的追求？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:time-management",
-        "topic:adaptation",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:时间管理",
+        "topic:适应与改变",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1543,11 +1543,11 @@
         "有哪些实用的方法可以帮助我实现长期目标？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -1573,11 +1573,11 @@
         "科技发展对人类社会的影响有哪些，我该如何应对？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1603,11 +1603,11 @@
         "在消费文化盛行的时代，如何保持对生命本质的思考？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:interview",
-        "mood:reflective",
-        "mood:practical"
+        "topic:生活态度",
+        "topic:认知",
+        "format:对谈",
+        "mood:深思",
+        "mood:实用"
       ]
     },
     {
@@ -1633,11 +1633,11 @@
         "如何在快速变化的时代保持内心的平静？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:life-attitude",
-        "topic:adaptation",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:生活态度",
+        "topic:适应与改变",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1663,10 +1663,10 @@
         "个体自由与现代社会规则之间如何平衡？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:cognition",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1692,11 +1692,11 @@
         "社会学和人类学如何影响一个人的思维方式？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:cognition",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1723,10 +1723,10 @@
         "不同时间点对同一问题的看法为什么会发生改变？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1752,10 +1752,10 @@
         "如何理解播客中提到的‘得意忘形’的概念？"
       ],
       "tags": [
-        "topic:philosophy",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:哲学",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1781,11 +1781,11 @@
         "如何应对对未来的迷茫与担忧？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:philosophy",
-        "topic:adaptation",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:哲学",
+        "topic:适应与改变",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1811,11 +1811,11 @@
         "如何处理对生活的不满和反抗情绪？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -1841,11 +1841,11 @@
         "如何在快节奏的生活中重建对当下的觉察？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -1871,11 +1871,11 @@
         "如何在追求个体自由的同时找到生活的本质？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:investment",
-        "topic:philosophy",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:投资",
+        "topic:哲学",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -1901,10 +1901,10 @@
         "主播染粉头发的背后有什么更深层的意义？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:self-awareness",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:自我认知",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -1930,11 +1930,11 @@
         "如何选择适合自己的旅行目的地以获得心灵成长？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "format:solo",
-        "mood:reflective",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:心理健康",
+        "format:独白",
+        "mood:深思",
+        "mood:激励"
       ]
     },
     {
@@ -1960,11 +1960,11 @@
         "如何找到真正理解我的人？"
       ],
       "tags": [
-        "topic:self-awareness",
-        "topic:mental-health",
-        "format:interview",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:自我认知",
+        "topic:心理健康",
+        "format:对谈",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -1990,9 +1990,9 @@
         "除了药物治疗，还有哪些自然的方式可以帮助睡眠？"
       ],
       "tags": [
-        "topic:mental-health",
-        "format:solo",
-        "mood:comforting"
+        "topic:心理健康",
+        "format:独白",
+        "mood:治愈"
       ]
     },
     {
@@ -2018,9 +2018,9 @@
         "有没有推荐的晚间放松活动，可以帮助我更好地入睡？"
       ],
       "tags": [
-        "topic:mental-health",
-        "format:solo",
-        "mood:comforting"
+        "topic:心理健康",
+        "format:独白",
+        "mood:治愈"
       ]
     },
     {
@@ -2046,9 +2046,9 @@
         "在快节奏的生活中，如何保持心理健康？"
       ],
       "tags": [
-        "topic:mental-health",
-        "format:solo",
-        "mood:comforting"
+        "topic:心理健康",
+        "format:独白",
+        "mood:治愈"
       ]
     },
     {
@@ -2074,9 +2074,9 @@
         "为什么说生命展开的过程比结果更重要？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "format:solo",
-        "mood:reflective"
+        "topic:生活态度",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -2102,11 +2102,11 @@
         "为什么我总觉得别人无法理解我的痛苦？"
       ],
       "tags": [
-        "topic:mental-health",
-        "topic:self-awareness",
-        "topic:philosophy",
-        "format:solo",
-        "mood:reflective"
+        "topic:心理健康",
+        "topic:自我认知",
+        "topic:哲学",
+        "format:独白",
+        "mood:深思"
       ]
     },
     {
@@ -2132,11 +2132,11 @@
         "如何用真诚的态度面对人生的起伏？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "format:solo",
-        "mood:reflective",
-        "mood:comforting"
+        "topic:生活态度",
+        "topic:心理健康",
+        "format:独白",
+        "mood:深思",
+        "mood:治愈"
       ]
     },
     {
@@ -2162,11 +2162,11 @@
         "有哪些实用的方法可以让我更好地管理生活中的风险？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:philosophy",
-        "topic:adaptation",
-        "format:interview",
-        "mood:reflective"
+        "topic:生活态度",
+        "topic:哲学",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:深思"
       ]
     },
     {
@@ -2193,11 +2193,11 @@
         "如何从运动中学习并应用到职业发展和个人生活中？"
       ],
       "tags": [
-        "topic:life-attitude",
-        "topic:mental-health",
-        "topic:adaptation",
-        "format:interview",
-        "mood:inspirational"
+        "topic:生活态度",
+        "topic:心理健康",
+        "topic:适应与改变",
+        "format:对谈",
+        "mood:激励"
       ]
     }
   ]

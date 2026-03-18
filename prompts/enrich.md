@@ -8,9 +8,9 @@
    - 例：["我感觉工作越来越没意义，怎么办？", "如何在AI时代保持自己的竞争力？"]
 
 3. **tags**（从下面的标签表中选取，3-6个）：
-   topic标签可选：investment, investment-edu, cognition, knowledge-system, philosophy, life-attitude, mental-health, self-awareness, long-termism, entrepreneurship, ai, human-machine, time-management, adaptation, expression
-   format标签可选：interview, solo, panel, minisode
-   mood标签可选：inspirational, reflective, practical, comforting
+   topic标签可选：投资, 投资入门, 认知, 知识体系, 哲学, 生活态度, 心理健康, 自我认知, 长期主义, 创业, 人工智能, 人机关系, 时间管理, 适应与改变, 表达
+   format标签可选：对谈, 独白, 圆桌, 短播
+   mood标签可选：激励, 深思, 实用, 治愈
 
 ---
 播客标题：{title}
