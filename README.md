@@ -1,134 +1,121 @@
-# 🎧 播客解答器
+# 答案之书·播客版
 
-> 有问题，找播客 - 基于AI的播客智能推荐系统
+> 你的任务不是搜索关键词，而是像一个读过很多书的朋友一样，想想书架上哪一期播客曾经触碰过类似的问题。
 
-## 🚀 在线体验
+一个基于向量搜索的播客知识库。收录中文播客节目，用自然语言提问，找到真正能回应你困惑的那期节目。
 
-**立即访问：** [播客解答器 Live Demo](https://your-username.github.io/podcast-qa-system/)
-
-## 📖 项目介绍
-
-播客解答器是一个创新的播客推荐系统，让用户通过输入问题快速找到相关的播客内容。不再需要漫无目的地搜索，只需要描述你的困扰，系统就会为你推荐最合适的播客节目。
-
-### ✨ 核心特色
-
-- **🤖 智能问题分析** - AI理解用户问题并提取关键信息
-- **🔍 精准内容匹配** - 多维度搜索和智能排序算法  
-- **💻 简洁用户界面** - 响应式设计，支持所有设备
-- **🎯 个性化推荐** - 基于问题类型推荐最相关的播客
-
-### 🎯 使用场景
-
-- 工作效率问题：如何提高专注力？如何管理时间？
-- 心理健康困扰：如何缓解焦虑？如何管理情绪？
-- 个人成长需求：如何克服拖延？如何建立好习惯？
-- 理财投资疑问：如何开始投资？如何规划财务？
-
-## 🛠️ 技术架构
-
-### 后端技术栈
-- **FastAPI** - 现代化的Python Web框架
-- **Python 3.11** - 核心开发语言
-- **智能匹配算法** - 关键词提取和相关性计算
-
-### 前端技术栈  
-- **纯HTML/CSS/JavaScript** - 轻量级前端实现
-- **响应式设计** - 适配PC和移动设备
-- **现代化UI** - 简洁直观的用户界面
-
-### 部署方案
-- **GitHub Pages** - 静态网站托管
-- **单文件应用** - 简化部署和维护
-
-## 🚀 快速开始
-
-### 本地运行
-
-1. 克隆项目
-```bash
-git clone https://github.com/your-username/podcast-qa-system.git
-cd podcast-qa-system
-```
-
-2. 安装依赖
-```bash
-pip install fastapi uvicorn
-```
-
-3. 启动服务
-```bash
-python simple_server.py
-```
-
-4. 访问应用
-打开浏览器访问 `http://localhost:8080`
-
-### 在线部署
-
-项目支持一键部署到GitHub Pages，无需额外配置。
-
-## 📊 样本数据
-
-项目包含精选的播客样本数据：
-
-- **得到头条** - 商业财经类播客
-- **心理FM** - 心理健康类播客  
-- **创业内参** - 创业投资类播客
-- **商业就是这样** - 商业案例类播客
-
-涵盖工作效率、时间管理、心理健康、创业投资等热门话题。
-
-## 🎯 产品价值
-
-### 解决的问题
-- 播客内容海量，用户难以快速找到相关内容
-- 传统搜索按标题匹配，无法理解用户真实需求
-- 缺少基于问题导向的播客推荐系统
-
-### 创新点
-- **问题导向** - 用户输入问题而非关键词
-- **AI理解** - 智能分析问题类型和用户意图
-- **多维匹配** - 从标题、内容、嘉宾多角度匹配
-- **简单易用** - 一步操作获得精准推荐
-
-## 📈 发展规划
-
-### 短期目标
-- [x] MVP版本开发完成
-- [x] 样本数据导入
-- [x] 在线部署上线
-- [ ] 用户反馈收集
-- [ ] 算法优化改进
-
-### 长期愿景  
-- [ ] 播客数据库扩充至1000+期
-- [ ] 接入主流播客平台API
-- [ ] 用户个性化推荐
-- [ ] 社区功能和用户分享
-- [ ] 移动端APP开发
-
-## 🤝 贡献指南
-
-欢迎提交Issue和Pull Request！
-
-1. Fork 本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启Pull Request
-
-## 📝 许可证
-
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 👨‍💻 作者
-
-**阿哲** - [GitHub](https://github.com/your-username)
-
-## 🙏 致谢
-
-感谢所有播客创作者提供优质内容，让知识传播更加便捷。
+**线上地址：** http://47.237.167.8:3000
 
 ---
 
-**🎧 播客解答器 - 让播客成为你问题的答案**
+## 技术栈
+
+- **后端**：Python stdlib `http.server`（无框架依赖）
+- **数据库**：SQLite（`data/podcast.db`）
+- **向量搜索**：MiniMax `embo-01` embedding + NumPy 余弦相似度
+- **前端**：单文件 HTML + 原生 JS（`ui/answer-book.html`）
+- **部署**：阿里云 ECS + systemd
+
+## 当前数据
+
+收录 5 个播客，约 450 期节目（持续丰富中）：
+
+| 播客 | 主播 | 方向 |
+|------|------|------|
+| 无人知晓 | 孟岩 | 投资·人生·深度对话 |
+| 得意忘形 | 张潇雨 | 思维·投资·生活哲学 |
+| 知行小酒馆 | 艾菲 | 个人成长·认知 |
+| 山下声 | — | 生活·创作·手艺 |
+| 岩中花述 | — | 女性·独立·思考 |
+
+---
+
+## 本地运行
+
+**前置条件**
+
+```bash
+pip install -r requirements.txt
+# 需要 MINIMAX_API_KEY 用于向量搜索（没有 key 会自动降级为关键词搜索）
+```
+
+在项目根目录创建 `.env`：
+
+```
+MINIMAX_API_KEY=your_key_here
+ADMIN_TOKEN=your_admin_token
+```
+
+**启动服务**
+
+```bash
+python3 tools/server.py
+# 访问 http://localhost:3000
+```
+
+---
+
+## 添加新播客
+
+**自动方式**（推荐）：
+
+```bash
+python3 tools/add_podcast.py "播客名称" --confirm
+```
+
+会自动完成：搜索 Apple Podcasts → 抓取 RSS → AI 丰富内容 → 生成向量 → 导入数据库。
+
+**手动分步**：
+
+```bash
+# 1. 抓取 RSS
+python3 tools/scrape_rss.py "播客名称"
+
+# 2. AI 丰富（提取摘要、标签、问题匹配）
+python3 tools/enrich.py
+
+# 3. 生成向量 embedding
+python3 tools/embed.py
+
+# 4. 导入数据库
+python3 tools/import_db.py
+```
+
+---
+
+## 项目结构
+
+```
+tools/
+  server.py        # Web 服务器（路由 + 搜索 + Admin API）
+  add_podcast.py   # 一键添加播客的完整流程
+  scrape_rss.py    # RSS 抓取
+  enrich.py        # MiniMax LLM 丰富内容（摘要/标签/问题匹配）
+  embed.py         # 生成向量 embedding
+  import_db.py     # 导入 SQLite
+  search.py        # 搜索辅助工具
+
+ui/
+  answer-book.html # 主界面（播客浏览 + 向量搜索）
+  admin.html       # 管理后台（播客增删改、任务日志）
+  covers/          # 播客封面图（{id}.jpg）
+
+data/
+  podcast.db       # SQLite 数据库
+  scraped/         # RSS 抓取原始 JSON
+  enriched/        # AI 丰富后的 JSON
+
+skill/
+  system-prompt.md # "答案之书"人设 prompt
+```
+
+---
+
+## 部署（阿里云 ECS）
+
+参见 [DEPLOY.md](DEPLOY.md)。服务以 systemd 运行：
+
+```bash
+sudo systemctl status podcast-lib
+sudo journalctl -u podcast-lib -f
+```
