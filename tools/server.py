@@ -461,6 +461,14 @@ class Handler(BaseHTTPRequestHandler):
         if path in ("/admin", "/admin.html"):
             self._serve_file(UI_DIR / "admin.html", "text/html; charset=utf-8")
             return
+        if path.startswith("/covers/"):
+            fname = urllib.parse.unquote(path[len("/covers/"):])
+            cover_path = UI_DIR / "covers" / fname
+            ext = fname.rsplit(".", 1)[-1].lower() if "." in fname else "jpg"
+            ctype = {"jpg": "image/jpeg", "jpeg": "image/jpeg",
+                     "png": "image/png", "webp": "image/webp"}.get(ext, "image/jpeg")
+            self._serve_file(cover_path, ctype)
+            return
         if path in ("/", "/index.html"):
             self._serve_file(UI_DIR / "answer-book.html", "text/html; charset=utf-8")
         elif path == "/api/episodes":
@@ -521,6 +529,90 @@ class Handler(BaseHTTPRequestHandler):
             q = qs.get("q", [None])[0] or ""
             limit = int(qs.get("limit", [10])[0])
             self._json(db_search(q, limit))
+        elif path == "/api/podcasts":
+            if not DB_PATH.exists():
+                self._json([])
+                return
+            conn = sqlite3.connect(DB_PATH)
+            rows = conn.execute("""
+                SELECT p.id, p.title, p.slug, p.description, p.author, p.rss_url,
+                       COUNT(e.id) AS ep_count,
+                       SUM(e.enriched) AS enriched_count,
+                       MAX(e.publish_date) AS last_date,
+                       COALESCE(p.cover_url, '') AS cover_url
+                FROM podcasts p
+                LEFT JOIN episodes e ON e.podcast_id = p.id
+                GROUP BY p.id ORDER BY p.title
+            """).fetchall()
+            result = []
+            for r in rows:
+                pid = r[0]
+                tag_rows = conn.execute(
+                    "SELECT tags FROM episodes WHERE podcast_id=? AND enriched=1 AND tags IS NOT NULL LIMIT 120",
+                    (pid,)
+                ).fetchall()
+                topic_counts = {}
+                for (tags_raw,) in tag_rows:
+                    try:
+                        for t in json.loads(tags_raw):
+                            if t.startswith("topic:"):
+                                k = t[6:]
+                                topic_counts[k] = topic_counts.get(k, 0) + 1
+                    except Exception:
+                        pass
+                top_topics = sorted(topic_counts, key=topic_counts.get, reverse=True)[:5]
+                result.append({
+                    "id": r[0], "title": r[1], "slug": r[2],
+                    "description": r[3] or "", "author": r[4] or "",
+                    "rss_url": r[5] or "",
+                    "episode_count": r[6] or 0,
+                    "enriched_count": r[7] or 0,
+                    "last_date": r[8] or "",
+                    "cover_url": r[9] or "",
+                    "top_topics": top_topics,
+                })
+            conn.close()
+            self._json(result)
+        elif re.match(r"^/api/podcast/[^/]+/episodes$", path):
+            slug = urllib.parse.unquote(path.split("/")[3])
+            limit = min(int(qs.get("limit", [50])[0]), 200)
+            offset = int(qs.get("offset", [0])[0])
+            if not DB_PATH.exists():
+                self._json({"total": 0, "items": []})
+                return
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            podcast = conn.execute(
+                "SELECT id FROM podcasts WHERE slug=?", (slug,)
+            ).fetchone()
+            if not podcast:
+                conn.close()
+                self._err(404, "播客不存在")
+                return
+            pid = podcast["id"]
+            total = conn.execute(
+                "SELECT COUNT(*) FROM episodes WHERE podcast_id=?", (pid,)
+            ).fetchone()[0]
+            rows = conn.execute("""
+                SELECT guid, episode_number, title, publish_date,
+                       duration_minutes, episode_url, enriched, summary
+                FROM episodes WHERE podcast_id=?
+                ORDER BY publish_date DESC LIMIT ? OFFSET ?
+            """, (pid, limit, offset)).fetchall()
+            conn.close()
+            self._json({
+                "total": total, "offset": offset,
+                "items": [{
+                    "guid": r["guid"],
+                    "episode_number": r["episode_number"],
+                    "title": r["title"],
+                    "publish_date": r["publish_date"],
+                    "duration_minutes": r["duration_minutes"],
+                    "episode_url": r["episode_url"],
+                    "enriched": bool(r["enriched"]),
+                    "summary": r["summary"] or "",
+                } for r in rows],
+            })
         else:
             self.send_error(404)
 

@@ -5,448 +5,827 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>答案之书·播客版</title>
 <style>
-  :root {
-    --bg: #0f0f11;
-    --surface: #1a1a1f;
-    --surface2: #24242b;
-    --border: #2e2e38;
-    --text: #e8e8f0;
-    --text2: #9090a8;
-    --text3: #5a5a72;
-    --accent: #7c6af7;
-    --accent-dim: #3d3575;
-    --green: #3ecf8e;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, "PingFang SC", sans-serif; min-height: 100vh; }
+:root {
+  --bg: #07070d;
+  --surface: #0e0e16;
+  --surface2: #15151f;
+  --surface3: #1c1c28;
+  --border: rgba(255,255,255,0.055);
+  --border2: rgba(255,255,255,0.10);
+  --text: #eeeef6;
+  --text2: #8a8aa8;
+  --text3: #44445a;
+  --accent: #6366f1;
+  --accent2: #8b5cf6;
+  --accent-glow: rgba(99,102,241,0.14);
+  --accent-dim: rgba(99,102,241,0.18);
+  --green: #10b981;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(99,102,241,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 110%, rgba(139,92,246,0.06) 0%, transparent 60%);
+}
 
-  /* ── Header ── */
-  header { text-align: center; padding: 56px 20px 32px; position: relative; }
-  header h1 { font-size: clamp(24px, 5vw, 40px); font-weight: 700; letter-spacing: -.5px; }
-  header h1 span { color: var(--accent); }
-  header p { color: var(--text2); margin-top: 10px; font-size: 15px; }
-  .admin-trigger {
-    position: absolute; top: 20px; right: 20px;
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text2); font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: .2s;
-  }
-  .admin-trigger:hover { border-color: var(--accent); color: var(--accent); }
+/* ── Header ── */
+header {
+  position: relative; z-index: 1;
+  padding: 52px 24px 0;
+  text-align: center;
+}
+.header-actions {
+  position: absolute; top: 18px; right: 22px;
+  display: flex; gap: 8px; align-items: center;
+}
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text2); font-size: 17px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; text-decoration: none; line-height: 1;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
 
-  /* ── Admin Modal ── */
-  .admin-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
-    z-index: 100; align-items: center; justify-content: center;
-  }
-  .admin-overlay.open { display: flex; }
-  .admin-modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; width: min(480px, 92vw); padding: 0;
-    box-shadow: 0 24px 60px rgba(0,0,0,.5);
-  }
-  .admin-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 20px; border-bottom: 1px solid var(--border);
-    font-weight: 600; font-size: 15px;
-  }
-  .admin-header button {
-    background: none; border: none; color: var(--text2);
-    font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 6px;
-  }
-  .admin-header button:hover { background: var(--surface2); color: var(--text); }
-  .admin-step { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-  .admin-hint { color: var(--text2); font-size: 13px; line-height: 1.5; }
-  .admin-step input {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 14px; color: var(--text);
-    font-size: 14px; outline: none; width: 100%;
-  }
-  .admin-step input:focus { border-color: var(--accent); }
-  .admin-step button {
-    background: var(--accent); color: #fff; border: none;
-    border-radius: 10px; padding: 10px 18px; font-size: 14px;
-    font-weight: 600; cursor: pointer; transition: .15s;
-  }
-  .admin-step button:hover { opacity: .85; }
-  .admin-step button:disabled { opacity: .45; cursor: default; }
-  .admin-err { color: #f87171; font-size: 13px; }
-  .existing-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .existing-tag {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 3px 10px; font-size: 12px; color: var(--text2);
-  }
-  .job-status {
-    font-size: 13px; font-weight: 600; color: var(--green); margin-top: 4px;
-  }
-  .job-status.error { color: #f87171; }
-  .job-log {
-    background: #0a0a0c; border: 1px solid var(--border); border-radius: 8px;
-    padding: 12px; font-size: 11px; color: #7a9; font-family: monospace;
-    max-height: 240px; overflow-y: auto; white-space: pre-wrap; margin-top: 8px;
-    line-height: 1.6;
-  }
+.logo {
+  font-size: clamp(28px, 5.5vw, 44px);
+  font-weight: 800; letter-spacing: -1.5px; line-height: 1;
+  background: linear-gradient(140deg, #fff 20%, #c7d2fe 60%, #a5b4fc 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-dot { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+.tagline { margin-top: 12px; font-size: 15px; color: var(--text2); }
 
-  /* ── Search box ── */
-  .search-wrap { max-width: 680px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
-  .search-wrap input {
-    width: 100%; padding: 18px 56px 18px 20px;
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius); color: var(--text); font-size: 16px; outline: none;
-    transition: border-color .2s;
-  }
-  .search-wrap input:focus { border-color: var(--accent); }
-  .search-wrap input::placeholder { color: var(--text3); }
-  .search-wrap button {
-    position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
-    background: var(--accent); border: none; border-radius: 8px;
-    color: #fff; padding: 8px 14px; cursor: pointer; font-size: 14px;
-    transition: opacity .15s;
-  }
-  .search-wrap button:hover { opacity: .85; }
+/* ── Search ── */
+.search-section {
+  position: relative; z-index: 1;
+  padding: 36px 20px 0;
+}
+.search-wrap { max-width: 640px; margin: 0 auto; position: relative; }
+.search-wrap input {
+  width: 100%;
+  padding: 15px 110px 15px 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 14px;
+  color: var(--text); font-size: 16px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  caret-color: var(--accent);
+}
+.search-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+.search-wrap input::placeholder { color: var(--text3); }
+.search-btn {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; border-radius: 10px;
+  color: #fff; padding: 9px 18px; cursor: pointer;
+  font-size: 14px; font-weight: 600; white-space: nowrap;
+  transition: opacity .15s;
+}
+.search-btn:hover { opacity: .85; }
 
-  /* ── Tabs ── */
-  .tabs { max-width: 960px; margin: 0 auto 24px; padding: 0 20px;
-          display: flex; gap: 8px; border-bottom: 1px solid var(--border); }
-  .tab { background: none; border: none; color: var(--text2); padding: 10px 16px;
-         cursor: pointer; font-size: 14px; border-bottom: 2px solid transparent;
-         margin-bottom: -1px; transition: color .15s; }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* ── Tabs ── */
+.tabs-row {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 28px auto 0; padding: 0 20px;
+}
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); }
+.tab {
+  background: none; border: none; color: var(--text3);
+  padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color .15s, border-color .15s; border-radius: 6px 6px 0 0;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  /* ── Status bar ── */
-  .status { max-width: 960px; margin: 0 auto 16px; padding: 0 20px;
-            font-size: 12px; color: var(--text3); display: flex; gap: 12px; align-items: center; }
-  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-  .status .dot.partial { background: #f5a623; }
+/* ── Status bar ── */
+.status-bar {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 12px auto 0; padding: 0 22px;
+  display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text3);
+}
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: var(--green); box-shadow: 0 0 6px rgba(16,185,129,.5);
+}
+.status-dot.partial { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,.4); }
 
-  /* ── Cards grid ── */
-  .grid { max-width: 960px; margin: 0 auto; padding: 0 20px 60px;
-          display: grid; gap: 16px; }
+/* ── Main ── */
+.section {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto;
+  padding: 20px 20px 80px;
+}
 
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px; cursor: pointer;
-    transition: border-color .2s, transform .15s;
-    display: grid; grid-template-columns: 1fr auto; gap: 12px;
-  }
-  .card:hover { border-color: var(--accent-dim); transform: translateY(-1px); }
-  .card-body { min-width: 0; }
-  .card-meta { font-size: 12px; color: var(--text3); margin-bottom: 6px;
-               display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .card-meta .podcast { color: var(--accent); font-weight: 500; }
-  .card-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
-  .card-summary { font-size: 13px; color: var(--text2); line-height: 1.6; }
-  .card-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag { font-size: 11px; padding: 3px 8px; border-radius: 20px;
-         background: var(--surface2); color: var(--text3); }
-  .tag.topic { color: #7c6af7; background: #2a2560; }
-  .card-side { display: flex; flex-direction: column; align-items: flex-end;
-               justify-content: space-between; min-width: 60px; }
-  .duration { font-size: 12px; color: var(--text3); white-space: nowrap; }
-  .open-btn {
-    font-size: 12px; padding: 6px 12px; border-radius: 6px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text2); text-decoration: none; white-space: nowrap;
-    transition: background .15s;
-  }
-  .open-btn:hover { background: var(--accent-dim); color: #fff; }
-  .enriched-badge { font-size: 10px; color: var(--green); }
+/* ── Utilities ── */
+.placeholder {
+  text-align: center; padding: 80px 20px;
+  color: var(--text3); font-size: 15px; line-height: 2;
+}
+.placeholder-icon { font-size: 44px; margin-bottom: 14px; }
+.placeholder-sub { font-size: 13px; }
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 72px 20px; color: var(--text3); font-size: 14px;
+}
+.spinner {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 2px solid var(--border2); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Expand panel ── */
-  .card-detail { display: none; grid-column: 1 / -1; margin-top: 8px;
-                 border-top: 1px solid var(--border); padding-top: 14px; }
-  .card.expanded .card-detail { display: block; }
-  .card-detail h4 { font-size: 12px; color: var(--text3); margin-bottom: 8px;
-                    text-transform: uppercase; letter-spacing: .5px; }
-  .qm-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .qm-list li { font-size: 13px; color: var(--text2); padding: 8px 12px;
-                background: var(--surface2); border-radius: 6px; line-height: 1.5; }
-  .qm-list li::before { content: "Q  "; color: var(--accent); font-weight: 600; }
+/* ── Episode cards ── */
+.ep-list { display: flex; flex-direction: column; gap: 10px; }
+.ep-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, transform .15s;
+  display: grid; grid-template-columns: 1fr auto; gap: 16px;
+}
+.ep-card:hover {
+  border-color: var(--border2); transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(0,0,0,.38);
+}
+.ep-meta {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 8px; font-size: 12px;
+}
+.ep-podcast { color: var(--accent); font-weight: 600; }
+.ep-date { color: var(--text3); }
+.ep-enriched { color: var(--green); font-size: 11px; }
+.ep-title { font-size: 15px; font-weight: 700; line-height: 1.45; margin-bottom: 8px; }
+.ep-summary { font-size: 13px; color: var(--text2); line-height: 1.68; }
+.ep-tags { margin-top: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
+.tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--surface3); color: var(--text3); }
+.tag.topic { color: #a5b4fc; background: var(--accent-dim); }
+.ep-side {
+  display: flex; flex-direction: column;
+  align-items: flex-end; justify-content: space-between; min-width: 64px;
+}
+.ep-duration { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.ep-link {
+  font-size: 12px; padding: 6px 13px; border-radius: 8px;
+  background: var(--surface3); border: 1px solid var(--border2);
+  color: var(--text2); text-decoration: none; white-space: nowrap; transition: all .15s;
+}
+.ep-link:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.ep-detail {
+  display: none; grid-column: 1 / -1;
+  margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px;
+}
+.ep-card.open .ep-detail { display: block; }
+.qm-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+.qm-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.qm-list li {
+  font-size: 13px; color: var(--text2);
+  padding: 8px 12px; background: var(--surface2); border-radius: 8px; line-height: 1.55;
+}
+.qm-list li::before { content: "Q  "; color: var(--accent); font-weight: 700; }
 
-  /* ── Empty / loading ── */
-  .placeholder { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
-  .loading { text-align: center; padding: 40px; color: var(--text3); }
-  .loading::after { content: ""; display: inline-block; width: 16px; height: 16px;
-    border: 2px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-left: 8px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── Podcast grid (browse) ── */
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
 
-  /* ── Pagination ── */
-  .pagination { max-width: 960px; margin: 0 auto 40px; padding: 0 20px;
-                display: flex; gap: 8px; justify-content: center; }
-  .page-btn { background: var(--surface); border: 1px solid var(--border);
-              color: var(--text2); padding: 8px 16px; border-radius: 8px;
-              cursor: pointer; font-size: 13px; }
-  .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-  .page-btn:disabled { opacity: .35; cursor: default; }
-  .page-info { line-height: 36px; font-size: 13px; color: var(--text3); }
+/* Album-style card */
+.pc-card {
+  background: var(--surface2);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  display: flex; flex-direction: column;
+}
+.pc-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 48px rgba(0,0,0,.55);
+}
+.pc-card:hover .pc-overlay { opacity: 1; }
+.pc-card:hover .view-btn-over { opacity: 1; transform: translateY(0); }
+
+/* Square cover */
+.pc-cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface3);
+  flex-shrink: 0;
+}
+.pc-cover img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .3s;
+}
+.pc-card:hover .pc-cover img { transform: scale(1.04); }
+.pc-cover .pc-emoji {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+}
+
+/* Hover overlay with play button */
+.pc-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+}
+.view-btn-over {
+  background: rgba(255,255,255,.95);
+  color: #111; border: none; border-radius: 50px;
+  padding: 10px 22px; font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .2s, transform .2s;
+}
+
+/* Progress bar */
+.pc-bar { height: 2px; width: 100%; background: var(--surface3); flex-shrink: 0; }
+.pc-bar-fill { height: 2px; background: linear-gradient(90deg, var(--green), #34d399); transition: width .5s; }
+
+/* Info below cover */
+.pc-body {
+  padding: 12px 14px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.pc-title { font-size: 14px; font-weight: 700; letter-spacing: -.2px; line-height: 1.3; }
+.pc-author { font-size: 12px; color: var(--text3); }
+.pc-topics { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.pc-topic { font-size: 10px; padding: 2px 8px; border-radius: 20px; color: #a5b4fc; background: var(--accent-dim); }
+.pc-stats-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 4px; font-size: 11px; color: var(--text3);
+}
+.pc-stats-row b { color: var(--text2); }
+.pc-stats-row .g { color: var(--green); }
+
+/* ── Drawer ── */
+.drawer-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 80;
+  backdrop-filter: blur(3px); animation: fadein .2s;
+}
+.drawer-overlay.open { display: block; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.drawer {
+  position: fixed; top: 0; right: 0;
+  width: min(500px, 100vw); height: 100vh;
+  background: var(--surface); border-left: 1px solid var(--border2);
+  z-index: 90; display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.32,0,.17,1);
+  box-shadow: -24px 0 64px rgba(0,0,0,.5);
+}
+.drawer.open { transform: translateX(0); }
+.drawer-head {
+  padding: 18px 18px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0;
+}
+.drawer-cover {
+  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  overflow: hidden; position: relative;
+}
+.drawer-cover img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 12px;
+}
+.drawer-info { flex: 1; min-width: 0; }
+.drawer-title { font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drawer-sub { font-size: 12px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+.drawer-close {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; color: var(--text2);
+  display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all .15s;
+}
+.drawer-close:hover { color: var(--text); background: var(--surface3); }
+.drawer-filter {
+  padding: 10px 14px; flex-shrink: 0; border-bottom: 1px solid var(--border);
+}
+.drawer-filter input {
+  width: 100%; padding: 8px 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 13px; outline: none;
+}
+.drawer-filter input:focus { border-color: var(--accent); }
+.drawer-filter input::placeholder { color: var(--text3); }
+.drawer-list { flex: 1; overflow-y: auto; }
+.drawer-list::-webkit-scrollbar { width: 4px; }
+.drawer-list::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+.drawer-ep {
+  padding: 13px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 10px; transition: background .12s;
+}
+.drawer-ep:hover { background: var(--surface2); }
+.drawer-ep-num { font-size: 11px; color: var(--text3); min-width: 26px; text-align: right; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.drawer-ep-body { flex: 1; min-width: 0; }
+.drawer-ep-title { font-size: 13px; font-weight: 600; line-height: 1.45; margin-bottom: 4px; }
+.drawer-ep-meta { font-size: 11px; color: var(--text3); display: flex; gap: 8px; align-items: center; }
+.drawer-ep-enriched { color: var(--green); }
+.drawer-ep-link {
+  flex-shrink: 0; font-size: 11px; color: var(--text3);
+  text-decoration: none; padding: 4px 9px; border-radius: 6px;
+  border: 1px solid var(--border); transition: all .15s; align-self: center;
+}
+.drawer-ep-link:hover { color: var(--accent); border-color: var(--accent); }
+.drawer-more {
+  text-align: center; padding: 14px; color: var(--text2); font-size: 13px;
+  cursor: pointer; border-top: 1px solid var(--border); flex-shrink: 0; transition: color .15s;
+}
+.drawer-more:hover { color: var(--accent); }
+.drawer-empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
+
+/* ── Add podcast modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.65); z-index: 200;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(5px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 18px; width: min(460px, 92vw);
+  box-shadow: 0 28px 80px rgba(0,0,0,.65); overflow: hidden;
+}
+.modal-head {
+  padding: 18px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 15px;
+}
+.modal-x {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--surface2); border: none; color: var(--text2);
+  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; transition: color .15s;
+}
+.modal-x:hover { color: var(--text); }
+.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.modal-hint { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.modal-input {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 11px 14px;
+  color: var(--text); font-size: 14px; outline: none; width: 100%;
+  caret-color: var(--accent);
+}
+.modal-input:focus { border-color: var(--accent); }
+.modal-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: 10px;
+  padding: 11px 18px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s;
+}
+.modal-btn:hover { opacity: .85; }
+.modal-btn:disabled { opacity: .4; cursor: default; }
+.modal-err { font-size: 13px; color: #f87171; }
+.podcast-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.podcast-chip { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--surface3); color: var(--text3); }
+.job-status { font-size: 13px; font-weight: 600; color: var(--green); }
+.job-status.err { color: #f87171; }
+.job-log {
+  background: #04040b; border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+  font-size: 11px; color: #6dbb99; font-family: "SF Mono", "Fira Mono", monospace;
+  max-height: 220px; overflow-y: auto; white-space: pre-wrap; line-height: 1.7;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .pc-grid { grid-template-columns: 1fr; }
+  .drawer { width: 100vw; }
+  .ep-card { grid-template-columns: 1fr; }
+  .ep-side { flex-direction: row; justify-content: space-between; margin-top: 8px; }
+}
 </style>
 </head>
 <body>
 
+<!-- ── Header ── -->
 <header>
-  <h1>答案之书<span>·播客版</span></h1>
-  <p>把你的困惑说出来，找到那期值得一听的节目</p>
-  <button class="admin-trigger" onclick="openAdmin()" title="添加播客">＋</button>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="openAddModal()" title="添加播客">＋</button>
+    <a class="icon-btn" href="/admin" title="管理后台">⚙</a>
+  </div>
+  <div class="logo">答案之书<span class="logo-dot">·</span>播客版</div>
+  <p class="tagline">把你的困惑说出来，找到那期值得一听的节目</p>
 </header>
 
-<!-- Admin Modal -->
-<div id="admin-overlay" class="admin-overlay" onclick="if(event.target===this)closeAdmin()">
-  <div class="admin-modal">
-    <div class="admin-header">
-      <span>添加播客</span>
-      <button onclick="closeAdmin()">✕</button>
+<!-- ── Search ── -->
+<div class="search-section">
+  <div class="search-wrap">
+    <input id="q" type="text" placeholder="比如：如何在低迷的市场里保持耐心？" autocomplete="off" />
+    <button class="search-btn" onclick="doSearch()">搜索</button>
+  </div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs-row">
+  <div class="tabs">
+    <button class="tab active" data-tab="search" onclick="switchTab('search')">搜索结果</button>
+    <button class="tab" data-tab="browse" onclick="switchTab('browse')">浏览频道</button>
+  </div>
+</div>
+
+<!-- ── Status ── -->
+<div class="status-bar" id="status-bar"></div>
+
+<!-- ── Content ── -->
+<div class="section">
+  <div id="content">
+    <div class="placeholder">
+      <div class="placeholder-icon">🎙</div>
+      输入问题，找到你需要的那期播客
+      <div class="placeholder-sub">或切换到「浏览频道」看看都有哪些播客</div>
     </div>
-    <div id="admin-auth" class="admin-step">
-      <p class="admin-hint">请输入管理员 Token 以继续</p>
-      <input id="admin-token" type="password" placeholder="Admin Token"
-             onkeydown="if(event.key==='Enter')submitToken()" />
-      <button onclick="submitToken()">验证</button>
-      <p id="auth-err" class="admin-err" style="display:none"></p>
+  </div>
+</div>
+
+<!-- ── Drawer ── -->
+<div class="drawer-overlay" id="d-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-cover" id="d-cover">🎙</div>
+    <div class="drawer-info">
+      <div class="drawer-title" id="d-title">—</div>
+      <div class="drawer-sub" id="d-sub">—</div>
     </div>
-    <div id="admin-form" class="admin-step" style="display:none">
-      <p class="admin-hint">输入播客名称，自动搜索 RSS 并导入全部节目（约 5–15 分钟）</p>
-      <input id="podcast-name" type="text" placeholder="如：硬地骇客、随机波动…" maxlength="60"
-             onkeydown="if(event.key==='Enter')submitAdd()" />
-      <button id="add-btn" onclick="submitAdd()">开始添加</button>
-      <p id="add-err" class="admin-err" style="display:none"></p>
-      <div id="existing-list" class="existing-list"></div>
-      <div id="job-panel" style="display:none">
-        <div class="job-status" id="job-status-text"></div>
-        <pre id="job-log" class="job-log"></pre>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-filter">
+    <input id="d-filter" type="text" placeholder="在节目中搜索…" oninput="filterDrawer()" />
+  </div>
+  <div class="drawer-list" id="d-list">
+    <div class="drawer-empty">加载中…</div>
+  </div>
+  <div class="drawer-more" id="d-more" style="display:none" onclick="loadMoreDrawer()">加载更多 ↓</div>
+</div>
+
+<!-- ── Add podcast modal ── -->
+<div class="modal-overlay" id="m-overlay" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <div class="modal-head">
+      添加播客
+      <button class="modal-x" onclick="closeAddModal()">✕</button>
+    </div>
+    <!-- Auth step -->
+    <div class="modal-body" id="m-auth">
+      <p class="modal-hint">请输入管理员 Token 以继续</p>
+      <input class="modal-input" id="m-token" type="password" placeholder="Admin Token"
+             onkeydown="if(event.key==='Enter')doAuth()" />
+      <button class="modal-btn" onclick="doAuth()">验证</button>
+      <p class="modal-err" id="m-auth-err" style="display:none"></p>
+    </div>
+    <!-- Add step -->
+    <div class="modal-body" id="m-add" style="display:none">
+      <div class="podcast-chips" id="m-chips"></div>
+      <p class="modal-hint">输入播客名称，自动搜索 RSS 并导入全部节目（约 5–15 分钟）</p>
+      <input class="modal-input" id="m-name" type="text" placeholder="如：硬地骇客、随机波动…"
+             maxlength="60" onkeydown="if(event.key==='Enter')doAdd()" />
+      <button class="modal-btn" id="m-btn" onclick="doAdd()">开始添加</button>
+      <p class="modal-err" id="m-add-err" style="display:none"></p>
+      <div id="m-job" style="display:none">
+        <div class="job-status" id="m-job-status"></div>
+        <pre class="job-log" id="m-job-log"></pre>
       </div>
     </div>
   </div>
 </div>
 
-<div class="search-wrap">
-  <input id="q" type="text" placeholder="比如：如何在低迷的市场里保持耐心？" autocomplete="off" />
-  <button onclick="doSearch()">搜索</button>
-</div>
-
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('search')">搜索结果</button>
-  <button class="tab" onclick="switchTab('browse')">浏览全部</button>
-</div>
-
-<div class="status" id="status"></div>
-<div class="grid" id="grid"><div class="placeholder">输入问题，找到你需要的那期播客</div></div>
-<div class="pagination" id="pagination" style="display:none"></div>
-
 <script>
-const PAGE = 30;
-let browseOffset = 0, browseTotal = 0, currentTab = 'search';
+// ── State ──────────────────────────────────────────────────────────
+let _tab = 'search';
+let _adminToken = sessionStorage.getItem('adminToken') || '';
+let _pollTimer = null;
+let _podcasts = [];
+let _drawerSlug = null;
+let _drawerAll = [];
+let _drawerOffset = 0;
+const DRAWER_PAGE = 60;
 
-// ── Status ────────────────────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────────
+document.getElementById('q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+loadStatus();
+
 async function loadStatus() {
   try {
     const d = await fetch('/api/episodes?limit=1').then(r => r.json());
-    const pct = Math.round(d.enriched / d.total * 100);
+    const pct = d.total ? Math.round(d.enriched / d.total * 100) : 0;
     const partial = d.enriched < d.total;
-    document.getElementById('status').innerHTML = `
-      <span class="dot ${partial ? 'partial' : ''}"></span>
-      知行小酒馆 · ${d.total} 集 · ${d.enriched} 集已增强 (${pct}%)
-    `;
+    document.getElementById('status-bar').innerHTML = `
+      <span class="status-dot ${partial ? 'partial' : ''}"></span>
+      已收录 <b style="color:var(--text2)">${d.total}</b> 集节目
+      &nbsp;·&nbsp; <b style="color:var(--green)">${d.enriched}</b> 集 LLM 增强 (${pct}%)`;
   } catch {}
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
+// ── Tabs ────────────────────────────────────────────────────────────
 function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach((el, i) => {
-    el.classList.toggle('active', (i === 0 && tab === 'search') || (i === 1 && tab === 'browse'));
-  });
-  document.getElementById('pagination').style.display = tab === 'browse' ? 'flex' : 'none';
-  if (tab === 'browse') { browseOffset = 0; loadBrowse(); }
-  else renderEmpty();
+  _tab = tab;
+  document.querySelectorAll('.tab').forEach(el =>
+    el.classList.toggle('active', el.dataset.tab === tab));
+  if (tab === 'browse') loadBrowse();
+  else showEmpty();
 }
 
-// ── Search ────────────────────────────────────────────────────────────────────
-document.getElementById('q').addEventListener('keydown', e => e.key === 'Enter' && doSearch());
+function showEmpty() {
+  document.getElementById('content').innerHTML = `
+    <div class="placeholder">
+      <div class="placeholder-icon">🎙</div>
+      输入问题，找到你需要的那期播客
+      <div class="placeholder-sub">或切换到「浏览频道」看看都有哪些播客</div>
+    </div>`;
+}
 
+// ── Search ──────────────────────────────────────────────────────────
 async function doSearch() {
   const q = document.getElementById('q').value.trim();
   if (!q) return;
-  switchTabDom('search');
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '<div class="loading">正在搜索</div>';
+  document.querySelectorAll('.tab').forEach(el =>
+    el.classList.toggle('active', el.dataset.tab === 'search'));
+  _tab = 'search';
+  const el = document.getElementById('content');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>正在搜索…</div>';
   try {
-    const results = await fetch(`/api/ask?q=${encodeURIComponent(q)}&limit=20`).then(r => r.json());
-    renderCards(results, true);
+    const res = await fetch(`/api/ask?q=${encodeURIComponent(q)}&limit=20`).then(r => r.json());
+    renderEps(res);
   } catch {
-    grid.innerHTML = '<div class="placeholder">搜索出错，请稍后重试</div>';
+    el.innerHTML = '<div class="placeholder">搜索出错，请稍后重试</div>';
   }
 }
 
-// ── Browse ────────────────────────────────────────────────────────────────────
-async function loadBrowse() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '<div class="loading">加载中</div>';
-  try {
-    const d = await fetch(`/api/episodes?limit=${PAGE}&offset=${browseOffset}`).then(r => r.json());
-    browseTotal = d.total;
-    renderCards(d.items, false);
-    renderPagination();
-  } catch {
-    grid.innerHTML = '<div class="placeholder">加载失败</div>';
-  }
-}
-
-function renderPagination() {
-  const el = document.getElementById('pagination');
-  const page = Math.floor(browseOffset / PAGE) + 1;
-  const total = Math.ceil(browseTotal / PAGE);
-  el.innerHTML = `
-    <button class="page-btn" onclick="changePage(-1)" ${browseOffset === 0 ? 'disabled' : ''}>← 上一页</button>
-    <span class="page-info">${page} / ${total}</span>
-    <button class="page-btn" onclick="changePage(1)" ${browseOffset + PAGE >= browseTotal ? 'disabled' : ''}>下一页 →</button>
-  `;
-}
-
-function changePage(dir) {
-  browseOffset = Math.max(0, Math.min(browseOffset + dir * PAGE, browseTotal - 1));
-  loadBrowse();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ── Render ────────────────────────────────────────────────────────────────────
-function renderEmpty() {
-  document.getElementById('grid').innerHTML = '<div class="placeholder">输入问题，找到你需要的那期播客</div>';
-}
-
-function renderCards(items, isSearch) {
-  const grid = document.getElementById('grid');
+function renderEps(items) {
+  const el = document.getElementById('content');
   if (!items.length) {
-    grid.innerHTML = `<div class="placeholder">${isSearch ? '没有找到相关节目，换个说法试试？' : '暂无数据'}</div>`;
+    el.innerHTML = '<div class="placeholder">没有找到相关节目，换个说法试试？</div>';
     return;
   }
-  grid.innerHTML = items.map(ep => cardHtml(ep)).join('');
+  el.innerHTML = `<div class="ep-list">${items.map(epHtml).join('')}</div>`;
 }
 
-function cardHtml(ep) {
+function epHtml(ep) {
   const topics = (ep.tags || []).filter(t => t.startsWith('topic:')).map(t =>
-    `<span class="tag topic">${t.replace('topic:','')}</span>`).join('');
+    `<span class="tag topic">${esc(t.slice(6))}</span>`).join('');
   const moods = (ep.tags || []).filter(t => t.startsWith('mood:')).map(t =>
-    `<span class="tag">${t.replace('mood:','')}</span>`).join('');
-  const summary = ep.summary
-    ? `<div class="card-summary">${ep.summary}</div>`
-    : '';
-  const qmHtml = (ep.question_matches || []).length
-    ? `<div class="card-detail">
-        <h4>这集能回答的问题</h4>
-        <ul class="qm-list">${ep.question_matches.map(q => `<li>${q}</li>`).join('')}</ul>
-       </div>`
-    : '';
-  const enrichedBadge = ep.enriched ? '<span class="enriched-badge">✦ 已增强</span>' : '';
-
-  return `<div class="card" onclick="toggleCard(this)">
-    <div class="card-body">
-      <div class="card-meta">
-        <span class="podcast">${ep.podcast_title || ''}</span>
-        <span>${ep.publish_date || ''}</span>
-        ${enrichedBadge}
+    `<span class="tag">${esc(t.slice(5))}</span>`).join('');
+  const qm = (ep.question_matches || []).length ? `
+    <div class="ep-detail">
+      <div class="qm-label">这集能回答的问题</div>
+      <ul class="qm-list">${ep.question_matches.map(q => `<li>${esc(q)}</li>`).join('')}</ul>
+    </div>` : '';
+  return `
+  <div class="ep-card" onclick="this.classList.toggle('open')">
+    <div>
+      <div class="ep-meta">
+        <span class="ep-podcast">${esc(ep.podcast_title || '')}</span>
+        <span class="ep-date">${ep.publish_date || ''}</span>
+        ${ep.enriched ? '<span class="ep-enriched">✦ 已增强</span>' : ''}
       </div>
-      <div class="card-title">${ep.title}</div>
-      ${summary}
-      <div class="card-tags">${topics}${moods}</div>
-      ${qmHtml}
+      <div class="ep-title">${esc(ep.title)}</div>
+      ${ep.summary ? `<div class="ep-summary">${esc(ep.summary)}</div>` : ''}
+      <div class="ep-tags">${topics}${moods}</div>
+      ${qm}
     </div>
-    <div class="card-side">
-      <span class="duration">${ep.duration_minutes ? ep.duration_minutes + ' 分钟' : ''}</span>
-      <a class="open-btn" href="${ep.episode_url}" target="_blank" onclick="event.stopPropagation()">去听 →</a>
+    <div class="ep-side">
+      <span class="ep-duration">${ep.duration_minutes ? ep.duration_minutes + ' 分' : ''}</span>
+      <a class="ep-link" href="${ep.episode_url}" target="_blank"
+         onclick="event.stopPropagation()">去听 →</a>
     </div>
   </div>`;
 }
 
-function toggleCard(el) {
-  el.classList.toggle('expanded');
+// ── Browse – podcast grid ───────────────────────────────────────────
+const GRADS = [
+  ['#4f46e5','#7c3aed'], ['#0891b2','#0284c7'], ['#059669','#047857'],
+  ['#d97706','#b45309'], ['#dc2626','#b91c1c'], ['#9333ea','#7c3aed'],
+  ['#0369a1','#0e7490'], ['#15803d','#166534'], ['#b45309','#92400e'],
+  ['#be185d','#9d174d'],
+];
+const EMOJIS = {
+  '知行': '📈', '无人知晓': '🌙', '得意忘形': '💭',
+  '岩中花述': '🪨', '山下声': '🏔', '硬地': '⚽',
+  '随机波动': '🌊', '不合时宜': '⏳',
+};
+function podEmoji(t) {
+  for (const [k, v] of Object.entries(EMOJIS)) if (t.includes(k)) return v;
+  return '🎙';
+}
+function podGrad(i) {
+  const [a, b] = GRADS[i % GRADS.length];
+  return `linear-gradient(135deg,${a},${b})`;
 }
 
-function switchTabDom(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach((el, i) => {
-    el.classList.toggle('active', (i === 0 && tab === 'search') || (i === 1 && tab === 'browse'));
-  });
-  document.getElementById('pagination').style.display = tab === 'browse' ? 'flex' : 'none';
-}
-
-// ── Admin ─────────────────────────────────────────────────────────────────────
-let _adminToken = sessionStorage.getItem('adminToken') || '';
-let _pollTimer = null;
-
-function openAdmin() {
-  document.getElementById('admin-overlay').classList.add('open');
-  if (_adminToken) {
-    showAdminForm();
+async function loadBrowse() {
+  document.getElementById('content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>加载频道中…</div>';
+  try {
+    _podcasts = await fetch('/api/podcasts').then(r => r.json());
+    renderGrid();
+  } catch {
+    document.getElementById('content').innerHTML = '<div class="placeholder">加载失败，请稍后重试</div>';
   }
 }
-function closeAdmin() {
-  document.getElementById('admin-overlay').classList.remove('open');
+
+function renderGrid() {
+  if (!_podcasts.length) {
+    document.getElementById('content').innerHTML = '<div class="placeholder">暂无播客数据</div>';
+    return;
+  }
+  document.getElementById('content').innerHTML =
+    `<div class="pc-grid">${_podcasts.map(pcHtml).join('')}</div>`;
+}
+
+function pcHtml(p, i) {
+  const pct = p.episode_count ? Math.round(p.enriched_count / p.episode_count * 100) : 0;
+  const emoji = podEmoji(p.title);
+  const topics = (p.top_topics || []).slice(0, 3).map(t =>
+    `<span class="pc-topic">${esc(t)}</span>`).join('');
+  const coverInner = p.cover_url
+    ? `<img src="${esc(p.cover_url)}" alt="${esc(p.title)}" loading="lazy" />`
+    : `<span class="pc-emoji" style="background:${podGrad(i)};position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px">${emoji}</span>`;
+  return `
+  <div class="pc-card" onclick="openDrawer(${i})">
+    <div class="pc-cover">
+      ${coverInner}
+      <div class="pc-overlay">
+        <button class="view-btn-over">查看节目</button>
+      </div>
+    </div>
+    <div class="pc-bar"><div class="pc-bar-fill" style="width:${pct}%"></div></div>
+    <div class="pc-body">
+      <div class="pc-title">${esc(p.title)}</div>
+      ${p.author ? `<div class="pc-author">${esc(p.author)}</div>` : ''}
+      ${topics ? `<div class="pc-topics">${topics}</div>` : ''}
+      <div class="pc-stats-row">
+        <span><b>${p.episode_count}</b> 集 · <span class="g"><b>${pct}%</b> 增强</span></span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Drawer ─────────────────────────────────────────────────────────
+async function openDrawer(idx) {
+  const p = _podcasts[idx];
+  if (!p) return;
+  _drawerSlug = p.slug;
+  _drawerAll = [];
+  _drawerOffset = 0;
+
+  const coverEl = document.getElementById('d-cover');
+  if (p.cover_url) {
+    coverEl.innerHTML = `<img src="${esc(p.cover_url)}" alt="${esc(p.title)}" />`;
+    coverEl.style.background = 'none';
+  } else {
+    coverEl.innerHTML = podEmoji(p.title);
+    coverEl.style.background = podGrad(idx);
+  }
+  document.getElementById('d-title').textContent = p.title;
+  const subParts = [`${p.episode_count} 集`];
+  if (p.author) subParts.push(`by ${p.author}`);
+  if (p.last_date) subParts.push(`最近更新 ${p.last_date.slice(0, 7)}`);
+  document.getElementById('d-sub').textContent = subParts.join(' · ');
+  document.getElementById('d-filter').value = '';
+  document.getElementById('d-list').innerHTML = '<div class="drawer-empty">加载中…</div>';
+  document.getElementById('d-more').style.display = 'none';
+
+  document.getElementById('d-overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  await fetchDrawerPage();
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('d-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  _drawerSlug = null;
+}
+
+async function fetchDrawerPage() {
+  if (!_drawerSlug) return;
+  const res = await fetch(
+    `/api/podcast/${encodeURIComponent(_drawerSlug)}/episodes?limit=${DRAWER_PAGE}&offset=${_drawerOffset}`
+  );
+  if (!res.ok) {
+    document.getElementById('d-list').innerHTML = '<div class="drawer-empty">加载失败</div>';
+    return;
+  }
+  const data = await res.json();
+  _drawerAll = _drawerAll.concat(data.items);
+  _drawerOffset += data.items.length;
+  renderDrawer(_drawerAll);
+  document.getElementById('d-more').style.display =
+    _drawerOffset < data.total ? 'block' : 'none';
+}
+
+async function loadMoreDrawer() { await fetchDrawerPage(); }
+
+function filterDrawer() {
+  const q = document.getElementById('d-filter').value.trim().toLowerCase();
+  if (!q) { renderDrawer(_drawerAll); return; }
+  renderDrawer(_drawerAll.filter(e =>
+    e.title.toLowerCase().includes(q) || (e.summary || '').toLowerCase().includes(q)));
+}
+
+function renderDrawer(eps) {
+  const el = document.getElementById('d-list');
+  if (!eps.length) { el.innerHTML = '<div class="drawer-empty">没有找到节目</div>'; return; }
+  el.innerHTML = eps.map(e => `
+    <div class="drawer-ep">
+      <span class="drawer-ep-num">${e.episode_number || ''}</span>
+      <div class="drawer-ep-body">
+        <div class="drawer-ep-title">${esc(e.title)}</div>
+        <div class="drawer-ep-meta">
+          <span>${e.publish_date || ''}</span>
+          ${e.duration_minutes ? `<span>${e.duration_minutes} 分钟</span>` : ''}
+          ${e.enriched ? '<span class="drawer-ep-enriched">✦ 增强</span>' : ''}
+        </div>
+      </div>
+      <a class="drawer-ep-link" href="${e.episode_url}" target="_blank"
+         onclick="event.stopPropagation()">听 →</a>
+    </div>`).join('');
+}
+
+// ── Add podcast modal ───────────────────────────────────────────────
+function openAddModal() {
+  document.getElementById('m-overlay').classList.add('open');
+  if (_adminToken) showAddStep();
+  else {
+    document.getElementById('m-auth').style.display = 'flex';
+    document.getElementById('m-add').style.display = 'none';
+  }
+}
+function closeAddModal() {
+  document.getElementById('m-overlay').classList.remove('open');
   clearInterval(_pollTimer);
 }
 
-async function submitToken() {
-  const token = document.getElementById('admin-token').value.trim();
-  if (!token) return;
-  // Probe server with the token
-  const res = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': token } });
+async function doAuth() {
+  const t = document.getElementById('m-token').value.trim();
+  if (!t) return;
+  const res = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': t } });
   if (res.ok) {
-    _adminToken = token;
-    sessionStorage.setItem('adminToken', token);
-    showAdminForm();
+    _adminToken = t;
+    sessionStorage.setItem('adminToken', t);
+    showAddStep();
   } else {
-    const err = document.getElementById('auth-err');
-    err.textContent = 'Token 不正确，请重试';
-    err.style.display = 'block';
+    const e = document.getElementById('m-auth-err');
+    e.textContent = 'Token 不正确，请重试';
+    e.style.display = 'block';
   }
 }
 
-async function showAdminForm() {
-  document.getElementById('admin-auth').style.display = 'none';
-  document.getElementById('admin-form').style.display = 'flex';
-  // Load existing podcasts
-  const res = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': _adminToken } });
-  if (!res.ok) return;
-  const list = await res.json();
-  const el = document.getElementById('existing-list');
-  el.innerHTML = list.map(p =>
-    `<span class="existing-tag" title="${p.episode_count}集">📻 ${p.title}</span>`
-  ).join('');
+async function showAddStep() {
+  document.getElementById('m-auth').style.display = 'none';
+  document.getElementById('m-add').style.display = 'flex';
+  const list = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': _adminToken } })
+    .then(r => r.ok ? r.json() : []).catch(() => []);
+  document.getElementById('m-chips').innerHTML =
+    list.map(p => `<span class="podcast-chip">📻 ${esc(p.title)}</span>`).join('');
 }
 
-async function submitAdd() {
-  const name = document.getElementById('podcast-name').value.trim();
-  const errEl = document.getElementById('add-err');
+async function doAdd() {
+  const name = document.getElementById('m-name').value.trim();
+  const errEl = document.getElementById('m-add-err');
   errEl.style.display = 'none';
   if (!name) { errEl.textContent = '请输入播客名称'; errEl.style.display = 'block'; return; }
-
-  const btn = document.getElementById('add-btn');
-  btn.disabled = true;
-  btn.textContent = '提交中…';
-
+  const btn = document.getElementById('m-btn');
+  btn.disabled = true; btn.textContent = '提交中…';
   const res = await fetch('/api/admin/add-podcast', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Admin-Token': _adminToken },
     body: JSON.stringify({ name }),
   });
   const data = await res.json();
-
   if (!res.ok) {
-    errEl.textContent = data.error || '提交失败';
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = '开始添加';
+    errEl.textContent = data.error || '提交失败'; errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = '开始添加';
     return;
   }
-
-  // Start polling
-  const jobId = data.job_id;
-  document.getElementById('job-panel').style.display = 'block';
-  document.getElementById('podcast-name').value = '';
-  pollJob(jobId);
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-job').style.display = 'block';
+  pollJob(data.job_id);
 }
 
 function pollJob(jobId) {
@@ -455,37 +834,38 @@ function pollJob(jobId) {
     const res = await fetch(`/api/admin/job/${jobId}`, { headers: { 'X-Admin-Token': _adminToken } });
     if (!res.ok) return;
     const job = await res.json();
-
-    const logEl = document.getElementById('job-log');
-    const statusEl = document.getElementById('job-status-text');
+    const logEl = document.getElementById('m-job-log');
+    const statusEl = document.getElementById('m-job-status');
     logEl.textContent = job.log || '';
     logEl.scrollTop = logEl.scrollHeight;
-
+    const m = (job.log || '').match(/\[(\d+)\/(\d+)\]/g);
+    const last = m ? m[m.length - 1] : null;
     if (job.status === 'done') {
       clearInterval(_pollTimer);
       statusEl.textContent = '✅ 添加完成！刷新页面即可搜索';
       statusEl.className = 'job-status';
-      document.getElementById('add-btn').disabled = false;
-      document.getElementById('add-btn').textContent = '开始添加';
-      showAdminForm(); // Refresh podcast list
+      document.getElementById('m-btn').disabled = false;
+      document.getElementById('m-btn').textContent = '开始添加';
+      showAddStep();
     } else if (job.status === 'error') {
       clearInterval(_pollTimer);
       statusEl.textContent = '❌ 添加失败，请查看日志';
-      statusEl.className = 'job-status error';
-      document.getElementById('add-btn').disabled = false;
-      document.getElementById('add-btn').textContent = '重试';
+      statusEl.className = 'job-status err';
+      document.getElementById('m-btn').disabled = false;
+      document.getElementById('m-btn').textContent = '重试';
     } else {
-      // Count progress from log
-      const match = job.log.match(/\[(\d+)\/(\d+)\]/g);
-      const last = match ? match[match.length - 1] : null;
       statusEl.textContent = last ? `⚙️ 处理中 ${last}…` : '⚙️ 运行中…';
       statusEl.className = 'job-status';
     }
   }, 2000);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-loadStatus();
+// ── Util ───────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 </script>
 </body>
 </html>
