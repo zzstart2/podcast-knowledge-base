@@ -309,9 +309,68 @@ class Handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Token")
         self.end_headers()
+
+    def do_DELETE(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        if not self._check_admin():
+            return
+        m = re.match(r'^/api/admin/podcast/([^/]+)$', path)
+        if not m:
+            self.send_error(404)
+            return
+        slug = urllib.parse.unquote(m.group(1))
+        if not DB_PATH.exists():
+            self._err(404, "数据库不存在")
+            return
+        conn = sqlite3.connect(DB_PATH)
+        row = conn.execute("SELECT id, title FROM podcasts WHERE slug=?", (slug,)).fetchone()
+        if not row:
+            conn.close()
+            self._err(404, f"播客 {slug!r} 不存在")
+            return
+        pid, title = row
+        ep_count = conn.execute("SELECT COUNT(*) FROM episodes WHERE podcast_id=?", (pid,)).fetchone()[0]
+        conn.execute("DELETE FROM episodes WHERE podcast_id=?", (pid,))
+        conn.execute("DELETE FROM podcasts WHERE id=?", (pid,))
+        conn.commit()
+        conn.close()
+        self._json({"ok": True, "deleted": title, "episodes_removed": ep_count})
+
+    def do_PATCH(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        if not self._check_admin():
+            return
+        m = re.match(r'^/api/admin/podcast/([^/]+)$', path)
+        if not m:
+            self.send_error(404)
+            return
+        slug = urllib.parse.unquote(m.group(1))
+        length = int(self.headers.get("Content-Length", 0))
+        body = json.loads(self.rfile.read(length) or b"{}")
+        allowed = {"title", "description", "author"}
+        updates = {k: v for k, v in body.items() if k in allowed and isinstance(v, str)}
+        if not updates:
+            self._err(400, "无有效字段（允许: title, description, author）")
+            return
+        if not DB_PATH.exists():
+            self._err(404, "数据库不存在")
+            return
+        conn = sqlite3.connect(DB_PATH)
+        if not conn.execute("SELECT 1 FROM podcasts WHERE slug=?", (slug,)).fetchone():
+            conn.close()
+            self._err(404, f"播客 {slug!r} 不存在")
+            return
+        set_clause = ", ".join(f"{k}=?" for k in updates)
+        conn.execute(f"UPDATE podcasts SET {set_clause} WHERE slug=?",
+                     list(updates.values()) + [slug])
+        conn.commit()
+        conn.close()
+        self._json({"ok": True, "updated": list(updates.keys())})
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -363,16 +422,28 @@ class Handler(BaseHTTPRequestHandler):
             if not self._check_admin():
                 return
             if path == "/api/admin/podcasts":
-                # List existing podcasts (for dedup preview)
                 if DB_PATH.exists():
                     conn = sqlite3.connect(DB_PATH)
-                    rows = conn.execute(
-                        "SELECT p.title, p.slug, COUNT(e.id) as ep_count "
-                        "FROM podcasts p LEFT JOIN episodes e ON e.podcast_id=p.id "
-                        "GROUP BY p.id ORDER BY p.title"
-                    ).fetchall()
+                    rows = conn.execute("""
+                        SELECT p.id, p.title, p.slug, p.description, p.author,
+                               p.rss_url, p.language,
+                               COUNT(e.id)        AS ep_count,
+                               SUM(e.enriched)    AS enriched_count,
+                               MAX(e.publish_date) AS last_date
+                        FROM podcasts p
+                        LEFT JOIN episodes e ON e.podcast_id = p.id
+                        GROUP BY p.id
+                        ORDER BY p.title
+                    """).fetchall()
                     conn.close()
-                    self._json([{"title": r[0], "slug": r[1], "episode_count": r[2]} for r in rows])
+                    self._json([{
+                        "id": r[0], "title": r[1], "slug": r[2],
+                        "description": r[3] or "", "author": r[4] or "",
+                        "rss_url": r[5] or "", "language": r[6] or "zh",
+                        "episode_count": r[7] or 0,
+                        "enriched_count": r[8] or 0,
+                        "last_date": r[9] or "",
+                    } for r in rows])
                 else:
                     self._json([])
             elif path.startswith("/api/admin/job/"):
@@ -387,6 +458,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_error(404)
             return
 
+        if path in ("/admin", "/admin.html"):
+            self._serve_file(UI_DIR / "admin.html", "text/html; charset=utf-8")
+            return
         if path in ("/", "/index.html"):
             self._serve_file(UI_DIR / "answer-book.html", "text/html; charset=utf-8")
         elif path == "/api/episodes":

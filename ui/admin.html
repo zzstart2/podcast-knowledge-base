@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 · 答案之书</title>
+<style>
+  :root {
+    --bg: #0f0f11; --surface: #1a1a1f; --surface2: #24242b; --surface3: #2e2e38;
+    --border: #2e2e38; --text: #e8e8f0; --text2: #9090a8; --text3: #5a5a72;
+    --accent: #7c6af7; --accent-dim: #3d3575;
+    --green: #3ecf8e; --red: #f87171; --yellow: #fbbf24;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text);
+         font-family: -apple-system, "PingFang SC", sans-serif; min-height: 100vh; }
+
+  /* ── Login ── */
+  .login-wrap {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px; width: min(380px, 90vw);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .login-card h2 { font-size: 20px; font-weight: 700; }
+  .login-card p { color: var(--text2); font-size: 14px; }
+
+  /* ── Layout ── */
+  .app { display: none; flex-direction: column; min-height: 100vh; }
+  .app.visible { display: flex; }
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 56px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .topbar-logo { font-weight: 700; font-size: 16px; }
+  .topbar-logo span { color: var(--accent); }
+  .topbar-sep { color: var(--border); }
+  .topbar-title { color: var(--text2); font-size: 14px; }
+  .topbar-spacer { flex: 1; }
+  .topbar a { color: var(--text2); text-decoration: none; font-size: 13px; }
+  .topbar a:hover { color: var(--text); }
+  .topbar button.logout {
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text2); font-size: 13px; padding: 6px 12px; cursor: pointer;
+  }
+  .topbar button.logout:hover { border-color: var(--red); color: var(--red); }
+
+  .main { flex: 1; padding: 28px 24px; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ── Stats bar ── */
+  .stats { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px; flex: 1; min-width: 140px;
+  }
+  .stat-card .val { font-size: 28px; font-weight: 700; }
+  .stat-card .lbl { color: var(--text2); font-size: 12px; margin-top: 4px; }
+  .stat-card .val.green { color: var(--green); }
+  .stat-card .val.accent { color: var(--accent); }
+
+  /* ── Section ── */
+  .section-title {
+    font-size: 15px; font-weight: 600; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .badge {
+    background: var(--surface2); border-radius: 20px;
+    padding: 2px 8px; font-size: 11px; font-weight: 500; color: var(--text2);
+  }
+
+  /* ── Podcast cards ── */
+  .podcast-grid { display: grid; gap: 16px; }
+  .pc {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; transition: border-color .15s;
+  }
+  .pc:hover { border-color: var(--surface3); }
+  .pc-head {
+    padding: 18px 20px 14px;
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .pc-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--accent-dim); display: flex; align-items: center;
+    justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .pc-meta { flex: 1; min-width: 0; }
+  .pc-title {
+    font-weight: 700; font-size: 15px; cursor: pointer; display: inline-block;
+    border-bottom: 1px dashed transparent; transition: .15s;
+  }
+  .pc-title:hover { border-color: var(--accent); color: var(--accent); }
+  .pc-author { color: var(--text2); font-size: 13px; margin-top: 3px; }
+  .pc-desc {
+    color: var(--text2); font-size: 12px; margin-top: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .pc-actions { display: flex; gap: 8px; align-items: center; }
+  .btn-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; transition: .15s; color: var(--text2);
+  }
+  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-icon.danger:hover { border-color: var(--red); color: var(--red); }
+
+  .pc-foot {
+    border-top: 1px solid var(--border); padding: 10px 20px;
+    display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+  }
+  .pc-stat { font-size: 12px; color: var(--text3); }
+  .pc-stat strong { color: var(--text2); }
+  .enriched-bar-wrap { flex: 1; min-width: 100px; }
+  .enriched-bar-bg { background: var(--surface2); border-radius: 4px; height: 4px; }
+  .enriched-bar { background: var(--green); height: 4px; border-radius: 4px; transition: width .4s; }
+  .rss-link {
+    font-size: 11px; color: var(--text3); text-decoration: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+    display: inline-block;
+  }
+  .rss-link:hover { color: var(--accent); }
+
+  /* ── Inline edit ── */
+  .pc-edit-form {
+    border-top: 1px solid var(--border); padding: 16px 20px;
+    display: none; flex-direction: column; gap: 12px; background: var(--surface2);
+  }
+  .pc-edit-form.open { display: flex; }
+  .field-row { display: flex; flex-direction: column; gap: 5px; }
+  .field-row label { font-size: 12px; color: var(--text2); }
+  .field-row input, .field-row textarea {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 13px;
+    outline: none; width: 100%;
+  }
+  .field-row input:focus, .field-row textarea:focus { border-color: var(--accent); }
+  .field-row textarea { resize: vertical; min-height: 64px; font-family: inherit; }
+  .edit-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    border-radius: 8px; padding: 7px 14px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: none; transition: .15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-secondary { background: var(--surface3); color: var(--text2); }
+  .btn-secondary:hover { color: var(--text); }
+
+  /* ── Add podcast panel ── */
+  .add-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-top: 32px;
+  }
+  .add-row { display: flex; gap: 12px; align-items: flex-start; }
+  .add-row input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; color: var(--text); font-size: 14px; outline: none;
+  }
+  .add-row input:focus { border-color: var(--accent); }
+  .btn-add {
+    background: var(--accent); color: #fff; border: none; border-radius: 10px;
+    padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer;
+    white-space: nowrap; transition: .15s;
+  }
+  .btn-add:hover { opacity: .85; }
+  .btn-add:disabled { opacity: .45; cursor: default; }
+  .job-log {
+    background: #080810; border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; font-size: 11px; color: #6fb; font-family: monospace;
+    max-height: 280px; overflow-y: auto; white-space: pre-wrap;
+    margin-top: 14px; line-height: 1.7; display: none;
+  }
+  .job-log.visible { display: block; }
+  .job-status-line { font-size: 13px; font-weight: 600; margin-top: 10px; }
+  .job-status-line.ok { color: var(--green); }
+  .job-status-line.err { color: var(--red); }
+  .add-hint { color: var(--text3); font-size: 12px; margin-top: 8px; }
+
+  /* ── Confirm modal ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .confirm-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; width: min(400px, 90vw);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .confirm-card h3 { font-size: 17px; font-weight: 700; }
+  .confirm-card p { color: var(--text2); font-size: 14px; line-height: 1.6; }
+  .confirm-card .warn { color: var(--red); font-weight: 600; }
+  .confirm-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 20px; font-size: 13px; font-weight: 500;
+    transition: transform .3s; z-index: 300; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.ok { border-color: var(--green); color: var(--green); }
+  .toast.err { border-color: var(--red); color: var(--red); }
+
+  /* ── Inputs shared ── */
+  input, textarea { color-scheme: dark; }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-card">
+    <h2>🔐 管理后台</h2>
+    <p>请输入管理员 Token 以访问</p>
+    <input id="login-token" type="password" placeholder="Admin Token"
+           style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+                  padding:10px 14px;color:var(--text);font-size:14px;outline:none;width:100%"
+           onkeydown="if(event.key==='Enter')doLogin()" />
+    <button onclick="doLogin()"
+            style="background:var(--accent);color:#fff;border:none;border-radius:10px;
+                   padding:11px;font-size:14px;font-weight:700;cursor:pointer">
+      进入管理后台
+    </button>
+    <p id="login-err" style="color:var(--red);font-size:13px;display:none"></p>
+  </div>
+</div>
+
+<!-- App -->
+<div class="app" id="app">
+  <div class="topbar">
+    <span class="topbar-logo">答案之书<span>·播客版</span></span>
+    <span class="topbar-sep">|</span>
+    <span class="topbar-title">播客管理后台</span>
+    <div class="topbar-spacer"></div>
+    <a href="/">← 返回首页</a>
+    <button class="logout" onclick="doLogout()">退出登录</button>
+  </div>
+
+  <div class="main">
+    <!-- Stats -->
+    <div class="stats" id="stats"></div>
+
+    <!-- Podcast list -->
+    <div class="section-title">
+      播客库 <span class="badge" id="podcast-count">—</span>
+    </div>
+    <div class="podcast-grid" id="podcast-grid">
+      <div style="color:var(--text3);font-size:13px;padding:20px">加载中…</div>
+    </div>
+
+    <!-- Add podcast -->
+    <div class="add-panel">
+      <div class="section-title" style="margin-bottom:12px">➕ 添加新播客</div>
+      <div class="add-row">
+        <input id="add-name" type="text" placeholder="输入播客名称，如：硬地骇客、随机波动…"
+               maxlength="60" onkeydown="if(event.key==='Enter')submitAdd()" />
+        <button class="btn-add" id="add-btn" onclick="submitAdd()">开始添加</button>
+      </div>
+      <p class="add-hint">自动通过 Apple Podcasts 查找 RSS，全量抓取 + LLM 增强 + 向量化（约 5–15 分钟）</p>
+      <div id="add-job-status" class="job-status-line" style="display:none"></div>
+      <pre id="add-job-log" class="job-log"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="overlay" id="del-overlay" onclick="if(event.target===this)closeConfirm()">
+  <div class="confirm-card">
+    <h3>确认删除</h3>
+    <p id="del-msg"></p>
+    <div class="confirm-btns">
+      <button class="btn-sm btn-secondary" onclick="closeConfirm()">取消</button>
+      <button class="btn-sm btn-primary" id="del-confirm-btn"
+              style="background:var(--red)" onclick="confirmDelete()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+let TOKEN = sessionStorage.getItem('adminToken') || '';
+let _podcasts = [];
+let _deleteSlug = null;
+let _pollTimer = null;
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const t = document.getElementById('login-token').value.trim();
+  if (!t) return;
+  const res = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': t } });
+  if (res.ok) {
+    TOKEN = t;
+    sessionStorage.setItem('adminToken', t);
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    loadData();
+  } else {
+    const e = document.getElementById('login-err');
+    e.textContent = 'Token 不正确，请重试';
+    e.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('adminToken');
+  location.reload();
+}
+
+// ── Load data ─────────────────────────────────────────────────────────────────
+async function loadData() {
+  const res = await fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': TOKEN } });
+  if (!res.ok) { doLogout(); return; }
+  _podcasts = await res.json();
+  renderStats();
+  renderPodcasts();
+}
+
+function renderStats() {
+  const total_ep = _podcasts.reduce((s, p) => s + p.episode_count, 0);
+  const total_enriched = _podcasts.reduce((s, p) => s + p.enriched_count, 0);
+  const pct = total_ep ? Math.round(total_enriched / total_ep * 100) : 0;
+  document.getElementById('podcast-count').textContent = _podcasts.length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="val accent">${_podcasts.length}</div><div class="lbl">播客总数</div></div>
+    <div class="stat-card"><div class="val">${total_ep}</div><div class="lbl">节目总集数</div></div>
+    <div class="stat-card"><div class="val green">${total_enriched}</div><div class="lbl">已 LLM 增强</div></div>
+    <div class="stat-card"><div class="val ${pct===100?'green':''}">${pct}%</div><div class="lbl">增强覆盖率</div></div>
+  `;
+}
+
+function renderPodcasts() {
+  const grid = document.getElementById('podcast-grid');
+  if (!_podcasts.length) {
+    grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">暂无播客</div>';
+    return;
+  }
+  grid.innerHTML = _podcasts.map(p => {
+    const pct = p.episode_count ? Math.round(p.enriched_count / p.episode_count * 100) : 0;
+    const emoji = podcastEmoji(p.title);
+    return `
+    <div class="pc" id="pc-${p.slug}">
+      <div class="pc-head">
+        <div class="pc-icon">${emoji}</div>
+        <div class="pc-meta">
+          <div class="pc-title" onclick="toggleEdit('${p.slug}')" title="点击编辑">${esc(p.title)}</div>
+          <div class="pc-author">${esc(p.author || '未知作者')}</div>
+          ${p.description ? `<div class="pc-desc" title="${esc(p.description)}">${esc(p.description)}</div>` : ''}
+        </div>
+        <div class="pc-actions">
+          <button class="btn-icon" onclick="toggleEdit('${p.slug}')" title="编辑">✏️</button>
+          <button class="btn-icon danger" onclick="askDelete('${p.slug}','${esc(p.title)}',${p.episode_count})" title="删除">🗑️</button>
+        </div>
+      </div>
+      <div class="pc-foot">
+        <div class="pc-stat"><strong>${p.episode_count}</strong> 集</div>
+        <div class="pc-stat"><strong style="color:var(--green)">${p.enriched_count}</strong> 已增强</div>
+        <div class="enriched-bar-wrap">
+          <div class="enriched-bar-bg">
+            <div class="enriched-bar" style="width:${pct}%"></div>
+          </div>
+        </div>
+        <div class="pc-stat">${pct}%</div>
+        ${p.last_date ? `<div class="pc-stat">最近 <strong>${p.last_date.slice(0,7)}</strong></div>` : ''}
+        ${p.rss_url ? `<a class="rss-link" href="${p.rss_url}" target="_blank" title="${p.rss_url}">📡 RSS</a>` : ''}
+      </div>
+      <div class="pc-edit-form" id="edit-${p.slug}">
+        <div class="field-row">
+          <label>播客名称</label>
+          <input id="ef-title-${p.slug}" value="${esc(p.title)}" />
+        </div>
+        <div class="field-row">
+          <label>作者 / 主播</label>
+          <input id="ef-author-${p.slug}" value="${esc(p.author || '')}" />
+        </div>
+        <div class="field-row">
+          <label>简介</label>
+          <textarea id="ef-desc-${p.slug}">${esc(p.description || '')}</textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="btn-sm btn-primary" onclick="saveEdit('${p.slug}')">保存</button>
+          <button class="btn-sm btn-secondary" onclick="toggleEdit('${p.slug}')">取消</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function podcastEmoji(title) {
+  const map = {'知行':'📈','无人知晓':'🌙','得意忘形':'💭','岩中花述':'🪨','山下声':'🏔️'};
+  for (const [k, v] of Object.entries(map)) if (title.includes(k)) return v;
+  return '🎙️';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Edit ──────────────────────────────────────────────────────────────────────
+function toggleEdit(slug) {
+  const form = document.getElementById(`edit-${slug}`);
+  form.classList.toggle('open');
+}
+
+async function saveEdit(slug) {
+  const title = document.getElementById(`ef-title-${slug}`).value.trim();
+  const author = document.getElementById(`ef-author-${slug}`).value.trim();
+  const description = document.getElementById(`ef-desc-${slug}`).value.trim();
+  if (!title) { toast('播客名称不能为空', 'err'); return; }
+
+  const res = await fetch(`/api/admin/podcast/${encodeURIComponent(slug)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': TOKEN },
+    body: JSON.stringify({ title, author, description }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    toast(`已保存《${title}》`, 'ok');
+    await loadData();
+  } else {
+    toast(data.error || '保存失败', 'err');
+  }
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+function askDelete(slug, title, count) {
+  _deleteSlug = slug;
+  document.getElementById('del-msg').innerHTML =
+    `确定要删除播客《<strong>${esc(title)}</strong>》吗？<br>
+     <span class="warn">将同时删除 ${count} 集节目及其全部向量数据，此操作不可撤销。</span>`;
+  document.getElementById('del-overlay').classList.add('open');
+}
+
+function closeConfirm() {
+  _deleteSlug = null;
+  document.getElementById('del-overlay').classList.remove('open');
+}
+
+async function confirmDelete() {
+  if (!_deleteSlug) return;
+  const slug = _deleteSlug;
+  closeConfirm();
+  const res = await fetch(`/api/admin/podcast/${encodeURIComponent(slug)}`, {
+    method: 'DELETE',
+    headers: { 'X-Admin-Token': TOKEN },
+  });
+  const data = await res.json();
+  if (res.ok) {
+    toast(`已删除《${data.deleted}》，共 ${data.episodes_removed} 集`, 'ok');
+    await loadData();
+  } else {
+    toast(data.error || '删除失败', 'err');
+  }
+}
+
+// ── Add podcast ───────────────────────────────────────────────────────────────
+async function submitAdd() {
+  const name = document.getElementById('add-name').value.trim();
+  const errEl = document.getElementById('add-job-status');
+  if (!name) { errEl.textContent = '请输入播客名称'; errEl.className = 'job-status-line err'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('add-btn');
+  btn.disabled = true; btn.textContent = '提交中…';
+  errEl.style.display = 'none';
+
+  const res = await fetch('/api/admin/add-podcast', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': TOKEN },
+    body: JSON.stringify({ name }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    errEl.textContent = data.error || '提交失败';
+    errEl.className = 'job-status-line err'; errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = '开始添加';
+    return;
+  }
+
+  document.getElementById('add-name').value = '';
+  pollJob(data.job_id);
+}
+
+function pollJob(jobId) {
+  clearInterval(_pollTimer);
+  const logEl = document.getElementById('add-job-log');
+  const statusEl = document.getElementById('add-job-status');
+  logEl.classList.add('visible');
+  statusEl.style.display = 'block';
+
+  _pollTimer = setInterval(async () => {
+    const res = await fetch(`/api/admin/job/${jobId}`, { headers: { 'X-Admin-Token': TOKEN } });
+    if (!res.ok) return;
+    const job = await res.json();
+    logEl.textContent = job.log || '';
+    logEl.scrollTop = logEl.scrollHeight;
+
+    const match = (job.log || '').match(/\[(\d+)\/(\d+)\]/g);
+    const last = match ? match[match.length-1] : null;
+
+    if (job.status === 'done') {
+      clearInterval(_pollTimer);
+      statusEl.textContent = '✅ 添加完成！';
+      statusEl.className = 'job-status-line ok';
+      document.getElementById('add-btn').disabled = false;
+      document.getElementById('add-btn').textContent = '开始添加';
+      loadData();
+    } else if (job.status === 'error') {
+      clearInterval(_pollTimer);
+      statusEl.textContent = '❌ 添加失败，请查看日志';
+      statusEl.className = 'job-status-line err';
+      document.getElementById('add-btn').disabled = false;
+      document.getElementById('add-btn').textContent = '重试';
+    } else {
+      statusEl.textContent = last ? `⚙️ 处理中 ${last}…` : '⚙️ 运行中…';
+      statusEl.className = 'job-status-line';
+    }
+  }, 2000);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let _toastTimer;
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.classList.remove('show'); }, 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+if (TOKEN) {
+  fetch('/api/admin/podcasts', { headers: { 'X-Admin-Token': TOKEN } })
+    .then(r => r.ok ? (document.getElementById('login-wrap').style.display='none',
+                       document.getElementById('app').classList.add('visible'), loadData())
+                    : (TOKEN='', sessionStorage.removeItem('adminToken')));
+}
+</script>
+</body>
+</html>
