@@ -1,0 +1,23 @@
+id: "wu-ren-zhi-xiao"
+name: "无人知晓"
+description: "孟岩主理的投资向深度对话播客，由有知有行出品。每期邀请一位好友围绕投资话题展开，延伸至生活、自我反思与个人成长。节目的更新频率、嘉宾选择和主题都如同其名——无人知晓。"
+host_ids:
+  - "meng-yan"
+start_date: "2021-08"
+status: "active"
+total_episodes: 45
+platforms:
+  - name: "有知有行"
+    url: "https://youzhiyouxing.cn"
+  - name: "小宇宙"
+    url: "https://www.xiaoyuzhoufm.com/podcast/611719d3cb0b82e1df0ad29e"
+  - name: "Apple Podcasts"
+    url: "https://podcasts.apple.com/cn/podcast/无人知晓/id1581271335"
+  - name: "Spotify"
+    search: "无人知晓"
+tags:
+  - "topic:investment"
+  - "topic:cognition"
+  - "topic:philosophy"
+  - "format:interview"
+  - "lang:zh"

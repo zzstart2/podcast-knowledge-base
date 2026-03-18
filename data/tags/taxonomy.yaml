@@ -1,0 +1,74 @@
+# 标签词汇表 — 所有合法标签值的定义
+# 格式：namespace:value
+# 新增标签前先在此文件登记
+
+namespaces:
+
+  topic:
+    description: 内容话题，描述这一集主要讨论什么
+    values:
+      investment:         投资哲学与方法论
+      investment-edu:     投资者教育
+      cognition:          认知升级与思维框架
+      knowledge-system:   知识体系构建
+      philosophy:         哲学思辨
+      life-attitude:      人生态度与价值观
+      mental-health:      心理健康与情绪管理
+      self-awareness:     自我认知
+      long-termism:       长期主义
+      entrepreneurship:   创业与商业思考
+      ai:                 AI与技术前沿
+      human-machine:      人机关系与协作
+      time-management:    时间管理与效率
+      adaptation:         适应与坚守
+      expression:         表达与存在
+
+  format:
+    description: 节目形式
+    values:
+      interview:    一对一深度访谈
+      solo:         主播独白/独自思考
+      panel:        多人圆桌讨论
+      minisode:     短播客
+
+  mood:
+    description: 使用场景/情绪调性
+    values:
+      inspirational:  激励，点燃动力
+      reflective:     沉思，引发思考
+      practical:      实操，直接可用
+      comforting:     抚慰，情绪疗愈
+
+  field:
+    description: 人物所在领域（用于 Person 实体）
+    values:
+      investment:     投资/金融
+      education:      教育/知识传播
+      product:        产品思维
+      philosophy:     哲学/学术
+      media:          媒体/内容创业
+      ai:             AI/技术
+      business:       商业观察
+      finance-edu:    个人理财教育
+
+  style:
+    description: 人物表达风格（用于 Person 实体）
+    values:
+      conceptual:     概念化，擅长建构框架
+      practical:      实践导向，干货为主
+      storytelling:   叙事型，擅长讲故事
+      analytical:     分析型，逻辑严密
+      philosophical:  哲思型，追问本质
+
+  role:
+    description: 人物角色（用于 Person 实体）
+    values:
+      host:       主播
+      guest:      嘉宾
+
+  lang:
+    description: 节目语言
+    values:
+      zh:   普通话
+      en:   英语
+      mix:  中英混合

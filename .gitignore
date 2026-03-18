@@ -47,9 +47,14 @@ frontend.log
 .env.production
 *.pid
 
-# Database
+# Database (rebuilt from enriched JSONs on deploy)
 *.db
 *.sqlite
+*.db-shm
+*.db-wal
+
+# Raw scraped data (large, redundant if enriched exists)
+data/scraped/
 
 # Uploads
 uploads/

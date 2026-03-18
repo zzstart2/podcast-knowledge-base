@@ -1,0 +1,11 @@
+id: "jian-qi"
+name: "简七"
+aliases: ["Jane", "简七理财"]
+bio: "简七理财创始人，个人理财教育创业者，致力于帮助普通人建立极简投资体系"
+affiliations:
+  - "简七理财"
+tags:
+  - "field:finance-edu"
+  - "field:education"
+  - "role:guest"
+  - "style:practical"

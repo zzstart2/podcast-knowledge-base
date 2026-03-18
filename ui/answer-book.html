@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>答案之书·播客版</title>
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #1a1a1f;
+    --surface2: #24242b;
+    --border: #2e2e38;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --accent: #7c6af7;
+    --accent-dim: #3d3575;
+    --green: #3ecf8e;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, "PingFang SC", sans-serif; min-height: 100vh; }
+
+  /* ── Header ── */
+  header { text-align: center; padding: 56px 20px 32px; }
+  header h1 { font-size: clamp(24px, 5vw, 40px); font-weight: 700; letter-spacing: -.5px; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--text2); margin-top: 10px; font-size: 15px; }
+
+  /* ── Search box ── */
+  .search-wrap { max-width: 680px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
+  .search-wrap input {
+    width: 100%; padding: 18px 56px 18px 20px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); color: var(--text); font-size: 16px; outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--text3); }
+  .search-wrap button {
+    position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
+    background: var(--accent); border: none; border-radius: 8px;
+    color: #fff; padding: 8px 14px; cursor: pointer; font-size: 14px;
+    transition: opacity .15s;
+  }
+  .search-wrap button:hover { opacity: .85; }
+
+  /* ── Tabs ── */
+  .tabs { max-width: 960px; margin: 0 auto 24px; padding: 0 20px;
+          display: flex; gap: 8px; border-bottom: 1px solid var(--border); }
+  .tab { background: none; border: none; color: var(--text2); padding: 10px 16px;
+         cursor: pointer; font-size: 14px; border-bottom: 2px solid transparent;
+         margin-bottom: -1px; transition: color .15s; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Status bar ── */
+  .status { max-width: 960px; margin: 0 auto 16px; padding: 0 20px;
+            font-size: 12px; color: var(--text3); display: flex; gap: 12px; align-items: center; }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .status .dot.partial { background: #f5a623; }
+
+  /* ── Cards grid ── */
+  .grid { max-width: 960px; margin: 0 auto; padding: 0 20px 60px;
+          display: grid; gap: 16px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    display: grid; grid-template-columns: 1fr auto; gap: 12px;
+  }
+  .card:hover { border-color: var(--accent-dim); transform: translateY(-1px); }
+  .card-body { min-width: 0; }
+  .card-meta { font-size: 12px; color: var(--text3); margin-bottom: 6px;
+               display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .card-meta .podcast { color: var(--accent); font-weight: 500; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+  .card-summary { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .card-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 8px; border-radius: 20px;
+         background: var(--surface2); color: var(--text3); }
+  .tag.topic { color: #7c6af7; background: #2a2560; }
+  .card-side { display: flex; flex-direction: column; align-items: flex-end;
+               justify-content: space-between; min-width: 60px; }
+  .duration { font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .open-btn {
+    font-size: 12px; padding: 6px 12px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text2); text-decoration: none; white-space: nowrap;
+    transition: background .15s;
+  }
+  .open-btn:hover { background: var(--accent-dim); color: #fff; }
+  .enriched-badge { font-size: 10px; color: var(--green); }
+
+  /* ── Expand panel ── */
+  .card-detail { display: none; grid-column: 1 / -1; margin-top: 8px;
+                 border-top: 1px solid var(--border); padding-top: 14px; }
+  .card.expanded .card-detail { display: block; }
+  .card-detail h4 { font-size: 12px; color: var(--text3); margin-bottom: 8px;
+                    text-transform: uppercase; letter-spacing: .5px; }
+  .qm-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .qm-list li { font-size: 13px; color: var(--text2); padding: 8px 12px;
+                background: var(--surface2); border-radius: 6px; line-height: 1.5; }
+  .qm-list li::before { content: "Q  "; color: var(--accent); font-weight: 600; }
+
+  /* ── Empty / loading ── */
+  .placeholder { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
+  .loading { text-align: center; padding: 40px; color: var(--text3); }
+  .loading::after { content: ""; display: inline-block; width: 16px; height: 16px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-left: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Pagination ── */
+  .pagination { max-width: 960px; margin: 0 auto 40px; padding: 0 20px;
+                display: flex; gap: 8px; justify-content: center; }
+  .page-btn { background: var(--surface); border: 1px solid var(--border);
+              color: var(--text2); padding: 8px 16px; border-radius: 8px;
+              cursor: pointer; font-size: 13px; }
+  .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .page-btn:disabled { opacity: .35; cursor: default; }
+  .page-info { line-height: 36px; font-size: 13px; color: var(--text3); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>答案之书<span>·播客版</span></h1>
+  <p>把你的困惑说出来，找到那期值得一听的节目</p>
+</header>
+
+<div class="search-wrap">
+  <input id="q" type="text" placeholder="比如：如何在低迷的市场里保持耐心？" autocomplete="off" />
+  <button onclick="doSearch()">搜索</button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('search')">搜索结果</button>
+  <button class="tab" onclick="switchTab('browse')">浏览全部</button>
+</div>
+
+<div class="status" id="status"></div>
+<div class="grid" id="grid"><div class="placeholder">输入问题，找到你需要的那期播客</div></div>
+<div class="pagination" id="pagination" style="display:none"></div>
+
+<script>
+const PAGE = 30;
+let browseOffset = 0, browseTotal = 0, currentTab = 'search';
+
+// ── Status ────────────────────────────────────────────────────────────────────
+async function loadStatus() {
+  try {
+    const d = await fetch('/api/episodes?limit=1').then(r => r.json());
+    const pct = Math.round(d.enriched / d.total * 100);
+    const partial = d.enriched < d.total;
+    document.getElementById('status').innerHTML = `
+      <span class="dot ${partial ? 'partial' : ''}"></span>
+      知行小酒馆 · ${d.total} 集 · ${d.enriched} 集已增强 (${pct}%)
+    `;
+  } catch {}
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', (i === 0 && tab === 'search') || (i === 1 && tab === 'browse'));
+  });
+  document.getElementById('pagination').style.display = tab === 'browse' ? 'flex' : 'none';
+  if (tab === 'browse') { browseOffset = 0; loadBrowse(); }
+  else renderEmpty();
+}
+
+// ── Search ────────────────────────────────────────────────────────────────────
+document.getElementById('q').addEventListener('keydown', e => e.key === 'Enter' && doSearch());
+
+async function doSearch() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+  switchTabDom('search');
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '<div class="loading">正在搜索</div>';
+  try {
+    const results = await fetch(`/api/ask?q=${encodeURIComponent(q)}&limit=20`).then(r => r.json());
+    renderCards(results, true);
+  } catch {
+    grid.innerHTML = '<div class="placeholder">搜索出错，请稍后重试</div>';
+  }
+}
+
+// ── Browse ────────────────────────────────────────────────────────────────────
+async function loadBrowse() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '<div class="loading">加载中</div>';
+  try {
+    const d = await fetch(`/api/episodes?limit=${PAGE}&offset=${browseOffset}`).then(r => r.json());
+    browseTotal = d.total;
+    renderCards(d.items, false);
+    renderPagination();
+  } catch {
+    grid.innerHTML = '<div class="placeholder">加载失败</div>';
+  }
+}
+
+function renderPagination() {
+  const el = document.getElementById('pagination');
+  const page = Math.floor(browseOffset / PAGE) + 1;
+  const total = Math.ceil(browseTotal / PAGE);
+  el.innerHTML = `
+    <button class="page-btn" onclick="changePage(-1)" ${browseOffset === 0 ? 'disabled' : ''}>← 上一页</button>
+    <span class="page-info">${page} / ${total}</span>
+    <button class="page-btn" onclick="changePage(1)" ${browseOffset + PAGE >= browseTotal ? 'disabled' : ''}>下一页 →</button>
+  `;
+}
+
+function changePage(dir) {
+  browseOffset = Math.max(0, Math.min(browseOffset + dir * PAGE, browseTotal - 1));
+  loadBrowse();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderEmpty() {
+  document.getElementById('grid').innerHTML = '<div class="placeholder">输入问题，找到你需要的那期播客</div>';
+}
+
+function renderCards(items, isSearch) {
+  const grid = document.getElementById('grid');
+  if (!items.length) {
+    grid.innerHTML = `<div class="placeholder">${isSearch ? '没有找到相关节目，换个说法试试？' : '暂无数据'}</div>`;
+    return;
+  }
+  grid.innerHTML = items.map(ep => cardHtml(ep)).join('');
+}
+
+function cardHtml(ep) {
+  const topics = (ep.tags || []).filter(t => t.startsWith('topic:')).map(t =>
+    `<span class="tag topic">${t.replace('topic:','')}</span>`).join('');
+  const moods = (ep.tags || []).filter(t => t.startsWith('mood:')).map(t =>
+    `<span class="tag">${t.replace('mood:','')}</span>`).join('');
+  const summary = ep.summary
+    ? `<div class="card-summary">${ep.summary}</div>`
+    : '';
+  const qmHtml = (ep.question_matches || []).length
+    ? `<div class="card-detail">
+        <h4>这集能回答的问题</h4>
+        <ul class="qm-list">${ep.question_matches.map(q => `<li>${q}</li>`).join('')}</ul>
+       </div>`
+    : '';
+  const enrichedBadge = ep.enriched ? '<span class="enriched-badge">✦ 已增强</span>' : '';
+
+  return `<div class="card" onclick="toggleCard(this)">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="podcast">${ep.podcast_title || ''}</span>
+        <span>${ep.publish_date || ''}</span>
+        ${enrichedBadge}
+      </div>
+      <div class="card-title">${ep.title}</div>
+      ${summary}
+      <div class="card-tags">${topics}${moods}</div>
+      ${qmHtml}
+    </div>
+    <div class="card-side">
+      <span class="duration">${ep.duration_minutes ? ep.duration_minutes + ' 分钟' : ''}</span>
+      <a class="open-btn" href="${ep.episode_url}" target="_blank" onclick="event.stopPropagation()">去听 →</a>
+    </div>
+  </div>`;
+}
+
+function toggleCard(el) {
+  el.classList.toggle('expanded');
+}
+
+function switchTabDom(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', (i === 0 && tab === 'search') || (i === 1 && tab === 'browse'));
+  });
+  document.getElementById('pagination').style.display = tab === 'browse' ? 'flex' : 'none';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadStatus();
+</script>
+</body>
+</html>
